@@ -1,3 +1,4 @@
+
 import type { LucideIcon } from 'lucide-react';
 
 export interface TeacherProfile {
@@ -25,19 +26,20 @@ export interface VideoResource {
   thumbnailUrl: string;
   embedUrl: string; // YouTube embed URL
   duration?: string; // e.g., "12:34"
+  uploadDate?: string; // ISO date string, conceptually from XML file's modifiedTime or data within XML
 }
 
-export type DocumentType = 'pdf' | 'doc' | 'txt';
-export type DocumentIconName = 'File' | 'FileArchive' | 'FileText'; // Add more as needed
+export type DocumentType = 'pdf' | 'doc' | 'docx' | 'txt' | 'file'; // 'file' for generic/unknown
+export type DocumentIconName = 'File' | 'FileArchive' | 'FileText';
 
 export interface DocumentResource {
-  id: string;
+  id: string; // Will be Google Drive File ID
   title: string;
   type: DocumentType;
-  icon: DocumentIconName; // Changed from LucideIcon to string
-  downloadUrl: string;
-  uploadDate: string; // ISO date string for sorting
-  fileSize?: string; // e.g., "2.5 MB"
+  icon: DocumentIconName;
+  downloadUrl: string; // Direct Google Drive download link
+  uploadDate: string; // ISO date string from Drive's modifiedTime
+  fileSize?: string; // e.g., "2.5 MB" from Drive's size
 }
 
 export interface MaterialContent {
