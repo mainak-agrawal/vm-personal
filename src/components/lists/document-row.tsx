@@ -1,14 +1,20 @@
 import { Button } from '@/components/ui/button';
-import type { DocumentResource } from '@/types';
-import { Download, CalendarDays } from 'lucide-react';
+import type { DocumentResource, DocumentIconName } from '@/types';
+import { Download, CalendarDays, File, FileText, FileArchive, type LucideIcon } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface DocumentRowProps {
   document: DocumentResource;
 }
 
+const iconMap: Record<DocumentIconName, LucideIcon> = {
+  File: File,
+  FileText: FileText,
+  FileArchive: FileArchive,
+};
+
 export function DocumentRow({ document }: DocumentRowProps) {
-  const IconComponent = document.icon;
+  const IconComponent = iconMap[document.icon] || File; // Fallback to File icon if not found
   return (
     <div className="flex items-center justify-between p-4 border-b hover:bg-secondary/50 transition-colors duration-200 rounded-md">
       <div className="flex items-center gap-4">

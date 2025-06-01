@@ -1,5 +1,5 @@
 import type { TeacherProfile, ResourceCategory, MaterialContent, VideoResource, DocumentResource } from '@/types';
-import { File, FileArchive, FileText } from 'lucide-react';
+// Removed direct LucideIcon imports as they are handled in DocumentRow
 
 const mockTeacherProfile: TeacherProfile = {
   name: 'Dr. Evelyn Reed',
@@ -57,10 +57,10 @@ const commonVideos: VideoResource[] = [
 ];
 
 const commonDocuments: DocumentResource[] = [
-  { id: 'd1', title: 'Chapter 1 Notes - Units and Measurements.pdf', type: 'pdf', icon: File, downloadUrl: '#', uploadDate: '2024-05-10T10:00:00Z', fileSize: '1.2MB' },
-  { id: 'd2', title: 'Practice Problems - Motion.docx', type: 'doc', icon: FileArchive, downloadUrl: '#', uploadDate: '2024-05-15T14:30:00Z', fileSize: '0.8MB' },
-  { id: 'd3', title: 'Lab Report Guidelines.txt', type: 'txt', icon: FileText, downloadUrl: '#', uploadDate: '2024-04-20T09:00:00Z', fileSize: '0.1MB' },
-  { id: 'd4', title: 'Syllabus Overview.pdf', type: 'pdf', icon: File, downloadUrl: '#', uploadDate: '2024-03-01T12:00:00Z', fileSize: '0.5MB' },
+  { id: 'd1', title: 'Chapter 1 Notes - Units and Measurements.pdf', type: 'pdf', icon: 'File', downloadUrl: '#', uploadDate: '2024-05-10T10:00:00Z', fileSize: '1.2MB' },
+  { id: 'd2', title: 'Practice Problems - Motion.docx', type: 'doc', icon: 'FileArchive', downloadUrl: '#', uploadDate: '2024-05-15T14:30:00Z', fileSize: '0.8MB' },
+  { id: 'd3', title: 'Lab Report Guidelines.txt', type: 'txt', icon: 'FileText', downloadUrl: '#', uploadDate: '2024-04-20T09:00:00Z', fileSize: '0.1MB' },
+  { id: 'd4', title: 'Syllabus Overview.pdf', type: 'pdf', icon: 'File', downloadUrl: '#', uploadDate: '2024-03-01T12:00:00Z', fileSize: '0.5MB' },
 ];
 
 const mockMaterialContents: Record<string, MaterialContent> = {
@@ -74,7 +74,7 @@ const mockMaterialContents: Record<string, MaterialContent> = {
     ],
     documents: [
       ...commonDocuments,
-      { id: 'd5_9', title: 'Sound Waves Explained.pdf', type: 'pdf', icon: File, downloadUrl: '#', uploadDate: '2024-05-01T11:00:00Z', fileSize: '1.5MB' },
+      { id: 'd5_9', title: 'Sound Waves Explained.pdf', type: 'pdf', icon: 'File', downloadUrl: '#', uploadDate: '2024-05-01T11:00:00Z', fileSize: '1.5MB' },
     ].sort((a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime()),
   },
   'class-10/physics': {
@@ -87,7 +87,7 @@ const mockMaterialContents: Record<string, MaterialContent> = {
     ],
     documents: [
       ...commonDocuments,
-      { id: 'd5_10', title: 'Electricity Numericals.docx', type: 'doc', icon: FileArchive, downloadUrl: '#', uploadDate: '2024-05-05T16:00:00Z', fileSize: '0.9MB' },
+      { id: 'd5_10', title: 'Electricity Numericals.docx', type: 'doc', icon: 'FileArchive', downloadUrl: '#', uploadDate: '2024-05-05T16:00:00Z', fileSize: '0.9MB' },
     ].sort((a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime()),
   },
    'class-11/physics': {
@@ -100,7 +100,7 @@ const mockMaterialContents: Record<string, MaterialContent> = {
     ],
     documents: [
       ...commonDocuments,
-      { id: 'd5_11', title: 'Vector Analysis.pdf', type: 'pdf', icon: File, downloadUrl: '#', uploadDate: '2024-04-28T10:30:00Z', fileSize: '2.1MB' },
+      { id: 'd5_11', title: 'Vector Analysis.pdf', type: 'pdf', icon: 'File', downloadUrl: '#', uploadDate: '2024-04-28T10:30:00Z', fileSize: '2.1MB' },
     ].sort((a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime()),
   },
   'class-12/physics': {
@@ -113,7 +113,7 @@ const mockMaterialContents: Record<string, MaterialContent> = {
     ],
     documents: [
       ...commonDocuments,
-      { id: 'd5_12', title: 'Modern Physics Q&A.docx', type: 'doc', icon: FileArchive, downloadUrl: '#', uploadDate: '2024-05-12T08:00:00Z', fileSize: '1.1MB' },
+      { id: 'd5_12', title: 'Modern Physics Q&A.docx', type: 'doc', icon: 'FileArchive', downloadUrl: '#', uploadDate: '2024-05-12T08:00:00Z', fileSize: '1.1MB' },
     ].sort((a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime()),
   },
 };

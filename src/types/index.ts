@@ -28,12 +28,13 @@ export interface VideoResource {
 }
 
 export type DocumentType = 'pdf' | 'doc' | 'txt';
+export type DocumentIconName = 'File' | 'FileArchive' | 'FileText'; // Add more as needed
 
 export interface DocumentResource {
   id: string;
   title: string;
   type: DocumentType;
-  icon: LucideIcon;
+  icon: DocumentIconName; // Changed from LucideIcon to string
   downloadUrl: string;
   uploadDate: string; // ISO date string for sorting
   fileSize?: string; // e.g., "2.5 MB"
