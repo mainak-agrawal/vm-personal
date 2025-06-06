@@ -27,13 +27,13 @@ export default async function HomePage() {
     <div className="container mx-auto px-4 py-8 md:py-12">
       <Card className="overflow-hidden shadow-xl">
         <div className="md:flex">
-          <div className="md:shrink-0 md:w-2/5"> {/* Changed from md:w-1/3 to md:w-2/5 */}
+          <div className="md:shrink-0 md:w-2/5">
             <Image
               src={profile.photoUrl}
               alt={profile.name}
-              width={482} // Updated to actual image aspect ratio
-              height={587} // Updated to actual image aspect ratio
-              className="h-full w-full object-cover"
+              width={482} 
+              height={587} 
+              className="h-full w-full object-contain" // Changed from object-cover to object-contain
               data-ai-hint="teacher portrait"
               priority
             />
