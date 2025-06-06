@@ -5,23 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getTeacherProfile } from '@/lib/data';
 import type { TeacherProfile, AcademicProfile, ProfessionalProfileSection } from '@/types';
-import { ArrowRight, Dot } from 'lucide-react'; // Using Dot for sub-bullets, consider another if you prefer circle
+import { ArrowRight, Dot } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Home',
 };
 
-const BulletPoint = ({ children }: { children: React.ReactNode }) => (
-  <li className="flex items-start text-muted-foreground">
-    <Dot className="h-5 w-5 text-primary mr-2 mt-1 shrink-0" />
-    <span>{children}</span>
-  </li>
-);
-
 const SubBulletPoint = ({ children }: { children: React.ReactNode }) => (
-  <li className="flex items-start text-muted-foreground ml-6"> {/* Added ml-6 for indentation */}
-    <Dot className="h-5 w-5 text-primary mr-2 mt-1 shrink-0" /> {/* Using Dot, can be circle or custom SVG */}
+  <li className="flex items-start text-muted-foreground ml-6">
+    <Dot className="h-5 w-5 text-primary mr-2 mt-1 shrink-0" />
     <span>{children}</span>
   </li>
 );
@@ -34,12 +27,12 @@ export default async function HomePage() {
     <div className="container mx-auto px-4 py-8 md:py-12">
       <Card className="overflow-hidden shadow-xl">
         <div className="md:flex">
-          <div className="md:shrink-0 md:w-1/3">
+          <div className="md:shrink-0 md:w-2/5"> {/* Changed from md:w-1/3 to md:w-2/5 */}
             <Image
               src={profile.photoUrl}
               alt={profile.name}
-              width={400}
-              height={400}
+              width={482} // Updated to actual image aspect ratio
+              height={587} // Updated to actual image aspect ratio
               className="h-full w-full object-cover"
               data-ai-hint="teacher portrait"
               priority
@@ -59,7 +52,7 @@ export default async function HomePage() {
               {profile.academicProfiles.map((academic, index) => (
                 <div key={`academic-${index}`}>
                   <h3 className="font-headline text-lg font-semibold text-foreground mb-1 flex items-center">
-                    <Dot className="h-6 w-6 text-primary mr-1 shrink-0" /> {/* Main bullet for heading */}
+                    <Dot className="h-6 w-6 text-primary mr-1 shrink-0" />
                     {academic.degree}
                   </h3>
                   <ul className="space-y-1">
@@ -73,7 +66,7 @@ export default async function HomePage() {
               {profile.professionalSections.map((section, index) => (
                 <div key={`professional-${index}`}>
                   <h3 className="font-headline text-lg font-semibold text-foreground mb-1 flex items-center">
-                    <Dot className="h-6 w-6 text-primary mr-1 shrink-0" /> {/* Main bullet for heading */}
+                    <Dot className="h-6 w-6 text-primary mr-1 shrink-0" />
                     {section.heading}
                   </h3>
                   <ul className="space-y-1">
