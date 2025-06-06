@@ -20,14 +20,14 @@ body {
     --popover: 0 0% 100%; /* White */
     --popover-foreground: 220 10% 15%; /* Dark Blue-Gray */
 
-    --primary: 210 98% 73%; /* Soft Blue #77B5FE */
-    --primary-foreground: 210 25% 15%; /* Dark Blue for contrast on Soft Blue */
+    --primary: 230 84% 60%; /* New Blue #4361EE */
+    --primary-foreground: 0 0% 98%; /* Almost white, for text on primary background */
 
-    --secondary: 210 20% 90%; /* Lighter muted blue */
-    --secondary-foreground: 210 25% 15%; /* Dark Blue */
+    --secondary: 230 20% 90%; /* Lighter muted new blue */
+    --secondary-foreground: 230 25% 15%; /* Dark new blue */
 
-    --muted: 210 20% 94%; /* Very light muted blue */
-    --muted-foreground: 210 10% 45%; /* Muted blue-gray */
+    --muted: 230 20% 94%; /* Very light muted new blue */
+    --muted-foreground: 230 10% 45%; /* Muted new blue-gray */
 
     --accent: 33 100% 63%; /* Warm Orange #FFB347 */
     --accent-foreground: 33 25% 15%; /* Dark Brown for contrast on Orange */
@@ -35,9 +35,9 @@ body {
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 210 20% 85%; /* Softer border color */
-    --input: 210 20% 88%; /* Softer input background */
-    --ring: 210 98% 65%; /* Ring color related to primary */
+    --border: 230 20% 85%; /* Softer border color (new blue hue) */
+    --input: 230 20% 88%; /* Softer input background (new blue hue) */
+    --ring: 230 84% 55%; /* Ring color related to new primary (slightly darker) */
 
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -66,14 +66,14 @@ body {
     --popover: 220 10% 15%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 210 98% 73%; /* Soft Blue #77B5FE */
-    --primary-foreground: 210 25% 15%; /* Dark Blue for contrast */
+    --primary: 230 84% 60%; /* New Blue #4361EE */
+    --primary-foreground: 0 0% 98%; /* Almost white, for text on primary background */
 
-    --secondary: 210 15% 25%; /* Darker muted blue */
+    --secondary: 230 15% 25%; /* Darker muted new blue */
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 210 15% 20%;
-    --muted-foreground: 210 10% 65%;
+    --muted: 230 15% 20%; /* Darker muted new blue */
+    --muted-foreground: 230 10% 65%; /* Muted new blue-gray */
 
     --accent: 33 100% 63%; /* Warm Orange #FFB347 */
     --accent-foreground: 33 25% 15%; /* Dark Brown for contrast */
@@ -81,9 +81,9 @@ body {
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 210 15% 30%;
-    --input: 210 15% 30%;
-    --ring: 210 98% 65%;
+    --border: 230 15% 30%; /* Border with new blue hue */
+    --input: 230 15% 30%; /* Input with new blue hue */
+    --ring: 230 84% 55%; /* Ring color related to new primary (slightly darker) */
     
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
