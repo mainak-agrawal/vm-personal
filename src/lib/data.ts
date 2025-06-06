@@ -1,19 +1,57 @@
 
-import type { TeacherProfile, ResourceCategory, MaterialContent, VideoResource, DocumentResource, DocumentIconName, DocumentType } from '@/types';
+import type { TeacherProfile, ResourceCategory, MaterialContent, VideoResource, DocumentResource, DocumentIconName, DocumentType, AcademicProfile, ProfessionalProfileSection } from '@/types';
 
-// --- Mock Data (Fallback) ---
 const mockTeacherProfile: TeacherProfile = {
-  name: 'Dr. Evelyn Reed',
-  title: 'Physics Educator',
-  credentials: ['Ph.D. in Theoretical Physics', 'M.Sc. in Physics', 'B.Ed.'],
-  experience: [
-    '15+ years teaching Physics at Northwood High',
-    'Recipient of the "Excellence in Teaching" award (2020)',
-    "Authored 'Concepts of Modern Physics' supplementary guide",
-    'Conducted various science workshops for students and educators',
+  name: 'Vishva Mohan',
+  title: 'Coach, Mentor, Guide.',
+  photoUrl: 'https://vishvamohan.com/assets/img/vishva_photo.JPG',
+  bio: 'An Ex-DM and Spl. Commissioner, Govt. of Delhi, Shri Vishva Mohan has a deep passion for teaching and mentoring. His profile is summarized below:',
+  academicProfiles: [
+    {
+      degree: 'B.Tech, IIT Delhi (1988)',
+      points: [
+        'All India JEE Rank: 201',
+        'CGPA: 7.87/10.00',
+      ],
+    },
+    {
+      degree: 'MBA, University of Notre Dame, USA (2005)',
+      points: [
+        'GMAT: 760/800',
+        'TOEFL: 283/300',
+        'GPA: 3.91/4.00',
+      ],
+    },
+    {
+      degree: 'UPSC IAS (Combined Civil Services) Exam (1991)',
+      points: [
+        'All India Rank: 479',
+        'Optional Subjects: Physics and Mechanical Engineering',
+      ],
+    },
   ],
-  photoUrl: 'https://placehold.co/300x300.png',
-  bio: 'A passionate educator dedicated to making physics accessible and exciting for all students. Dr. Reed believes in fostering a curious mindset and a deep understanding of the natural world through engaging lectures and practical resources.',
+  professionalSections: [
+    {
+      heading: 'Experience',
+      points: ['Over two decades of teaching and mentoring'],
+    },
+    {
+      heading: 'Specialization',
+      points: [
+        'JEE (Advanced) and JEE (Main)/NEET level Physics',
+        'CBSE Physics',
+        'SAT: English, Reasoning/Analytical, Math',
+        'Statement of Purpose (SoP) for admission to North American universities',
+      ],
+    },
+    {
+      heading: 'Proven Track Record',
+      points: [
+        'Many students successfully admitted to IITs, DTU, and other top institutions',
+        'All those who completed UG studies have subsequently been admitted to top US universities/IIMs or are excelling in MNCs/entrepreneurship',
+      ],
+    },
+  ],
 };
 
 const mockResourceCategories: ResourceCategory[] = [
@@ -285,4 +323,3 @@ export async function getResourceCategories(): Promise<ResourceCategory[]> {
   // These categories could also be dynamically generated based on Drive folder structure in a more advanced setup.
   return mockResourceCategories;
 }
-

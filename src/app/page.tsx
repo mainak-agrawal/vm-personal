@@ -1,15 +1,31 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getTeacherProfile } from '@/lib/data';
-import type { TeacherProfile } from '@/types';
-import { ArrowRight, CheckCircle } from 'lucide-react';
+import type { TeacherProfile, AcademicProfile, ProfessionalProfileSection } from '@/types';
+import { ArrowRight, Dot } from 'lucide-react'; // Using Dot for sub-bullets, consider another if you prefer circle
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Home',
 };
+
+const BulletPoint = ({ children }: { children: React.ReactNode }) => (
+  <li className="flex items-start text-muted-foreground">
+    <Dot className="h-5 w-5 text-primary mr-2 mt-1 shrink-0" />
+    <span>{children}</span>
+  </li>
+);
+
+const SubBulletPoint = ({ children }: { children: React.ReactNode }) => (
+  <li className="flex items-start text-muted-foreground ml-6"> {/* Added ml-6 for indentation */}
+    <Dot className="h-5 w-5 text-primary mr-2 mt-1 shrink-0" /> {/* Using Dot, can be circle or custom SVG */}
+    <span>{children}</span>
+  </li>
+);
+
 
 export default async function HomePage() {
   const profile: TeacherProfile = await getTeacherProfile();
@@ -40,34 +56,38 @@ export default async function HomePage() {
                 <p className="text-muted-foreground leading-relaxed">{profile.bio}</p>
               </div>
 
-              <div>
-                <h3 className="font-headline text-xl font-semibold text-foreground mb-3">Credentials</h3>
-                <ul className="space-y-2">
-                  {profile.credentials.map((cred, index) => (
-                    <li key={index} className="flex items-center text-muted-foreground">
-                      <CheckCircle className="h-5 w-5 text-primary mr-2 shrink-0" />
-                      <span>{cred}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-headline text-xl font-semibold text-foreground mb-3">Experience</h3>
-                <ul className="space-y-2">
-                  {profile.experience.map((exp, index) => (
-                    <li key={index} className="flex items-start text-muted-foreground">
-                       <CheckCircle className="h-5 w-5 text-primary mr-2 mt-1 shrink-0" />
-                      <span>{exp}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {profile.academicProfiles.map((academic, index) => (
+                <div key={`academic-${index}`}>
+                  <h3 className="font-headline text-lg font-semibold text-foreground mb-1 flex items-center">
+                    <Dot className="h-6 w-6 text-primary mr-1 shrink-0" /> {/* Main bullet for heading */}
+                    {academic.degree}
+                  </h3>
+                  <ul className="space-y-1">
+                    {academic.points.map((point, pIndex) => (
+                      <SubBulletPoint key={`academic-${index}-point-${pIndex}`}>{point}</SubBulletPoint>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              
+              {profile.professionalSections.map((section, index) => (
+                <div key={`professional-${index}`}>
+                  <h3 className="font-headline text-lg font-semibold text-foreground mb-1 flex items-center">
+                    <Dot className="h-6 w-6 text-primary mr-1 shrink-0" /> {/* Main bullet for heading */}
+                    {section.heading}
+                  </h3>
+                  <ul className="space-y-1">
+                    {section.points.map((point, pIndex) => (
+                      <SubBulletPoint key={`professional-${index}-point-${pIndex}`}>{point}</SubBulletPoint>
+                    ))}
+                  </ul>
+                </div>
+              ))}
               
               <div className="pt-4">
                 <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                   <Link href="/resources">
-                    Explore Resources
+                    Resources
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>

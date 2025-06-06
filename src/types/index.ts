@@ -1,13 +1,23 @@
 
 import type { LucideIcon } from 'lucide-react';
 
+export interface AcademicProfile {
+  degree: string; // e.g., "B.Tech, IIT Delhi (1988)"
+  points: string[]; // e.g., ["All India JEE Rank: 201", "CGPA: 7.87/10.00"]
+}
+
+export interface ProfessionalProfileSection {
+  heading: string; // e.g., "Experience", "Specialization"
+  points: string[];
+}
+
 export interface TeacherProfile {
   name: string;
   title: string;
-  credentials: string[];
-  experience: string[];
   photoUrl: string;
   bio: string;
+  academicProfiles: AcademicProfile[];
+  professionalSections: ProfessionalProfileSection[];
 }
 
 export interface ResourceCategory {

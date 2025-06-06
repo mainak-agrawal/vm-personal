@@ -5,10 +5,10 @@ import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: {
-    default: 'TeachSite',
-    template: '%s | TeachSite',
+    default: 'Vishva Mohan',
+    template: '%s | Vishva Mohan',
   },
-  description: 'Personal website for a school teacher, showcasing resources and materials.',
+  description: 'Personal website for an educator, showcasing resources and materials.',
 };
 
 export default function RootLayout({
