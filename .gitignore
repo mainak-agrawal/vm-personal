@@ -37,6 +37,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Cloudflare Workers
+.open-next/
+.wrangler/
+worker-configuration.d.ts
+
 .genkit/*
 .env*
 
