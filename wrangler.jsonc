@@ -3,18 +3,20 @@
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
 {
-	"name": "vm-personal",
-	"compatibility_date": "2025-09-22",
-	"assets": {
-		"directory": "./dist/client/"
-	},
-	"compatibility_flags": [
-		"nodejs_compat"
-	],
-	"r2_buckets": [
-		{
-			"binding": "vm-personal-r2",
-			"bucket_name": "vm-personal-website"
-		}
-	]
+  "main": ".open-next/worker.js",
+  "name": "vm-personal",
+  "compatibility_date": "2025-03-25",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "r2_buckets": [
+    {
+      "binding": "vm-personal-r2",
+      "bucket_name": "vm-personal-website"
+    }
+  ]
 }
