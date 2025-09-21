@@ -24,7 +24,7 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
   
   // Separate search and sort state for videos and documents
   const [videoSearchTerm, setVideoSearchTerm] = useState('');
-  const [videoSortOption, setVideoSortOption] = useState<SortOption>('date-desc');
+  const [videoSortOption, setVideoSortOption] = useState<SortOption>('name-asc');
   const [docSearchTerm, setDocSearchTerm] = useState('');
   const [docSortOption, setDocSortOption] = useState<SortOption>('date-desc');
 
@@ -41,12 +41,6 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
           return a.title.localeCompare(b.title);
         case 'name-desc':
           return b.title.localeCompare(a.title);
-        case 'date-desc':
-          // For videos, we'll use the id as a fallback since they might not have upload dates
-          // You can modify this if videos have actual upload dates
-          return b.id.localeCompare(a.id);
-        case 'date-asc':
-          return a.id.localeCompare(b.id);
         default:
           return 0;
       }
@@ -89,29 +83,37 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-8">
-      <aside className="w-full md:w-64 shrink-0">
-        <nav className="space-y-2 sticky top-20">
-          <Button
-            variant={activeTab === 'videos' ? 'secondary' : 'ghost'}
-            className="w-full justify-start text-lg py-3 h-auto"
+    <div className="w-full">
+      {/* Horizontal Tabs */}
+      <div className="border-b border-border mb-8">
+        <nav className="flex space-x-8">
+          <button
             onClick={() => setActiveTab('videos')}
+            className={`flex items-center gap-2 py-3 px-1 border-b-2 transition-colors ${
+              activeTab === 'videos'
+                ? 'border-primary text-primary font-medium'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300'
+            }`}
           >
-            <Film className="mr-3 h-5 w-5" />
+            <Film className="h-5 w-5" />
             Videos
-          </Button>
-          <Button
-            variant={activeTab === 'docs' ? 'secondary' : 'ghost'}
-            className="w-full justify-start text-lg py-3 h-auto"
+          </button>
+          <button
             onClick={() => setActiveTab('docs')}
+            className={`flex items-center gap-2 py-3 px-1 border-b-2 transition-colors ${
+              activeTab === 'docs'
+                ? 'border-primary text-primary font-medium'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300'
+            }`}
           >
-            <FileText className="mr-3 h-5 w-5" />
+            <FileText className="h-5 w-5" />
             Documents
-          </Button>
+          </button>
         </nav>
-      </aside>
+      </div>
 
-      <section className="flex-1 min-w-0">
+      {/* Content Section */}
+      <div className="w-full">
         {activeTab === 'videos' && (
           <div>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -133,8 +135,6 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
                   <SelectContent>
                     <SelectItem value="name-asc">Name (A-Z)</SelectItem>
                     <SelectItem value="name-desc">Name (Z-A)</SelectItem>
-                    <SelectItem value="date-desc">Newest First</SelectItem>
-                    <SelectItem value="date-asc">Oldest First</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -237,7 +237,7 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
             )}
           </div>
         )}
-      </section>
+      </div>
 
       <VideoPlayerModal video={selectedVideo} isOpen={!!selectedVideo} onClose={handleCloseModal} />
     </div>

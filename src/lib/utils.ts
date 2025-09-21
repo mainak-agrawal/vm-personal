@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3"
+import { S3Client, ListObjectsV2Command, GetObjectCommand } from "@aws-sdk/client-s3";
 
 const MAX_RETRIES = 5;
 const RETRY_DELAY_MS = 1000;
@@ -91,7 +91,160 @@ export async function getDocumentsFromR2(env?: Env): Promise<R2Document[]> {
 }
 
 // TODO: Implement method to get content of videos.xml file for a specific grade and subject
-// This will likely involve fetching the XML file from R2 and parsing it
+// This will likely involve fetching the text file from R2 and parsing it
+// Import GetObjectCommand for fetching file contents
+
+// Get file content using S3-compatible API
+export async function getFileContentUsingS3Api(filePath: string): Promise<string> {
+  const s3 = new S3Client({
+    region: "auto",
+    endpoint: R2_ENDPOINT,
+    credentials: {
+      accessKeyId: process.env.R2_ACCESS_KEY!,
+      secretAccessKey: process.env.R2_SECRET_KEY!,
+    },
+  });
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const result = await s3.send(
+        new GetObjectCommand({
+          Bucket: R2_BUCKET_NAME,
+          Key: filePath,
+        })
+      );
+      
+      // Convert the stream to text
+      const bodyContents = await result.Body?.transformToString();
+      if (!bodyContents) {
+        throw new Error(`Empty file content for ${filePath}`);
+      }
+      
+      return bodyContents;
+    } catch (err) {
+      console.warn(`R2 get file attempt ${attempt} failed for ${filePath}:`, err);
+      if (attempt < MAX_RETRIES) {
+        await new Promise((res) => setTimeout(res, RETRY_DELAY_MS));
+      } else {
+        throw new Error(`Failed to get file ${filePath} after retries.`);
+      }
+    }
+  }
+  
+  throw new Error(`Failed to get file ${filePath}`);
+}
+
+// Get file content using Cloudflare R2 bindings
+export async function getFileContentUsingR2Binding(filePath: string, env: Env): Promise<string> {
+  try {
+    const r2Bucket = env["vm-personal-r2"];
+    const object = await r2Bucket.get(filePath);
+    
+    if (!object) {
+      throw new Error(`File not found: ${filePath}`);
+    }
+    
+    return await object.text();
+  } catch (err) {
+    console.error(`Failed to get file ${filePath} using binding:`, err);
+    throw new Error(`Failed to get file ${filePath} using binding.`);
+  }
+}
+
+// Smart function that detects environment and uses appropriate method
+export async function getFileFromR2(filePath: string, env?: Env): Promise<string> {
+  // If env is provided and we have R2 binding, use it (Cloudflare Workers environment)
+  if (env && env["vm-personal-r2"]) {
+    return getFileContentUsingR2Binding(filePath, env);
+  }
+  
+  // Otherwise, use S3-compatible API (local development or other environments)
+  return getFileContentUsingS3Api(filePath);
+}
+
+/**
+ * Creates a YouTube oEmbed API URL for fetching video metadata in JSON format
+ * @param youtubeUrl The YouTube video URL
+ * @returns The complete oEmbed API URL
+ */
+export function createYoutubeOembedUrl(youtubeUrl: string): string {
+  return `https://www.youtube.com/oembed?url=${youtubeUrl}&format=json`;
+}
+
+/**
+ * Interface for YouTube oEmbed API response
+ */
+export interface YouTubeOEmbedResponse {
+  title: string;
+  author_name: string;
+  author_url: string;
+  type: string;
+  height: number;
+  width: number;
+  version: string;
+  provider_name: string;
+  provider_url: string;
+  thumbnail_height: number;
+  thumbnail_width: number;
+  thumbnail_url: string;
+  html: string;
+}
+
+/**
+ * Fetches YouTube video metadata from oEmbed API
+ * @param oembedUrl The YouTube oEmbed API URL
+ * @returns Promise containing the parsed JSON response
+ */
+export async function fetchYoutubeOembedData(oembedUrl: string): Promise<YouTubeOEmbedResponse> {
+  try {
+    const response = await fetch(oembedUrl);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch oEmbed data: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return data as YouTubeOEmbedResponse;
+  } catch (error) {
+    console.error("Error fetching YouTube oEmbed data:", error);
+    throw new Error("Failed to fetch YouTube video metadata");
+  }
+}
+
+/**
+ * Fetches and processes a list of YouTube videos from a text file stored in R2
+ * @param filePath Path to the text file in R2 containing YouTube URLs (one per line)
+ * @param env Optional R2 environment bindings
+ * @returns Map of youtube metadata objects
+ */
+export async function getYoutubeVideosFromR2File(filePath: string, env?: Env): Promise<Map<string, YouTubeOEmbedResponse>> {
+  try {
+    // Fetch the file content from R2
+    const fileContent = await getFileFromR2(filePath, env);
+    
+    // Split the content by lines and filter out any empty lines
+    const youtubeUrls = fileContent.split('\n').filter(url => url.trim() !== '');
+    
+    // Process each URL to fetch metadata
+    // Create a map to store URL -> oEmbed data mapping
+    const videoMap = new Map<string, YouTubeOEmbedResponse>();
+    
+    // Process each URL sequentially to maintain the mapping
+    for (const url of youtubeUrls) {
+      const trimmedUrl = url.trim();
+      if (trimmedUrl) {
+      const oembedUrl = createYoutubeOembedUrl(trimmedUrl);
+      const oembedData = await fetchYoutubeOembedData(oembedUrl);
+      videoMap.set(trimmedUrl, oembedData);
+      }
+    }
+    
+    return videoMap;
+  } catch (error) {
+    console.error(`Error processing YouTube videos from ${filePath}:`, error);
+    throw new Error(`Failed to process YouTube videos from file ${filePath}`);
+  }
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

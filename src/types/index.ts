@@ -27,6 +27,14 @@ export interface ResourceCategory {
   slug: string; // e.g., "class-10/physics"
 }
 
+export interface TopicCategory {
+  id: string;
+  name: string; // e.g., "Kinematics", "Electrostatics"
+  description: string;
+  slug: string; // e.g., "kinematics", "electrostatics"
+  gradeSubject: string; // e.g., "class-10-physics"
+}
+
 export interface VideoResource {
   id: string;
   title: string;
@@ -51,8 +59,10 @@ export interface DocumentResource {
 }
 
 export interface MaterialContent {
-  title: string; // e.g. "Class X Physics Resources"
-  description: string; // e.g. "Videos and documents for Class X Physics"
+  title: string; // e.g. "Kinematics - Class X Physics"
+  description: string; // e.g. "Videos and documents for Kinematics in Class X Physics"
+  topic: string; // e.g. "kinematics"
+  gradeSubject: string; // e.g. "class-10-physics"
   videos: VideoResource[];
   documents: DocumentResource[];
 }
