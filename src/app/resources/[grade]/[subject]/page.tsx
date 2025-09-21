@@ -14,7 +14,8 @@ export async function generateMetadata(
   { params }: MaterialPageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const content = await getMaterialContent(params.grade, params.subject);
+  const { grade, subject } = await params;
+  const content = await getMaterialContent(grade, subject);
   const title = content ? `${content.title} Resources` : 'Materials Not Found';
   return {
     title: title,
@@ -22,7 +23,7 @@ export async function generateMetadata(
 }
 
 export default async function MaterialPage({ params }: MaterialPageProps) {
-  const { grade, subject } = params;
+  const { grade, subject } = await params;
   const content = await getMaterialContent(grade, subject);
 
   if (!content) {
@@ -34,7 +35,7 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
       <header className="mb-8">
         <h1 className="font-headline text-4xl md:text-5xl font-bold text-primary">{content.title}</h1>
         <p className="mt-2 text-lg text-muted-foreground">
-          Explore videos and documents for {content.grade} {content.subject}.
+          Explore videos and documents for {grade} {subject}.
         </p>
       </header>
       <MaterialContentClient content={content} />

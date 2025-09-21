@@ -21,9 +21,7 @@ export interface TeacherProfile {
 }
 
 export interface ResourceCategory {
-  id: string;
-  grade: string;
-  subject: string;
+  gradesub: string;
   title: string;
   description: string;
   slug: string; // e.g., "class-10/physics"
@@ -53,9 +51,8 @@ export interface DocumentResource {
 }
 
 export interface MaterialContent {
-  grade: string;
-  subject: string;
   title: string; // e.g. "Class X Physics Resources"
+  description: string; // e.g. "Videos and documents for Class X Physics"
   videos: VideoResource[];
   documents: DocumentResource[];
 }

@@ -22,7 +22,7 @@ export default async function ResourcesPage() {
       {categories.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((category) => (
-            <ResourceCategoryCard key={category.id} category={category} />
+            <ResourceCategoryCard key={category.slug} category={category} />
           ))}
         </div>
       ) : (
