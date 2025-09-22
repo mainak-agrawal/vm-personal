@@ -1,14 +1,43 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { S3Client, ListObjectsV2Command, GetObjectCommand } from "@aws-sdk/client-s3";
+import { AwsClient } from "aws4fetch";
 
 const MAX_RETRIES = 5;
 const RETRY_DELAY_MS = 1000;
 const R2_BUCKET_NAME = "vm-personal-website";
 const R2_ENDPOINT = "https://b1d89b04dac23ca559dcfb1d5c79f341.r2.cloudflarestorage.com";
 
-interface Env {
-  "vm-personal-r2": R2Bucket;
+// Helper function to parse ListObjectsV2 XML response
+function parseListObjectsXml(xmlText: string): R2Document[] {
+  const documents: R2Document[] = [];
+  
+  // Simple XML parsing for ListBucketResult
+  const contentsRegex = /<Contents>([\s\S]*?)<\/Contents>/g;
+  let match;
+  
+  while ((match = contentsRegex.exec(xmlText)) !== null) {
+    const contentXml = match[1];
+    
+    // Extract Key, Size, LastModified
+    const keyMatch = contentXml.match(/<Key>(.*?)<\/Key>/);
+    const sizeMatch = contentXml.match(/<Size>(.*?)<\/Size>/);
+    const lastModifiedMatch = contentXml.match(/<LastModified>(.*?)<\/LastModified>/);
+    
+    if (keyMatch) {
+      const key = keyMatch[1];
+      const size = sizeMatch ? parseInt(sizeMatch[1]) : 0;
+      const uploaded = lastModifiedMatch ? new Date(lastModifiedMatch[1]) : new Date();
+      
+      documents.push({
+        key,
+        size,
+        uploaded,
+        url: `https://${R2_BUCKET_NAME}.r2.cloudflarestorage.com/${key}`,
+      });
+    }
+  }
+  
+  return documents;
 }
 
 export type R2Document = {
@@ -19,32 +48,30 @@ export type R2Document = {
 };
 
 export async function listDocumentsFromR2(): Promise<R2Document[]> {
-  // Fetch all objects in my R2 bucket using S3-compatible API
-  const s3 = new S3Client({
+  // Initialize aws4fetch client for R2
+  const client = new AwsClient({
+    service: "s3",
     region: "auto",
-    endpoint: R2_ENDPOINT,
-    credentials: {
-      accessKeyId: process.env.R2_ACCESS_KEY!,
-      secretAccessKey: process.env.R2_SECRET_KEY!,
-    },
+    accessKeyId: process.env.R2_ACCESS_KEY!,
+    secretAccessKey: process.env.R2_SECRET_KEY!,
   });
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const result = await s3.send(
-        new ListObjectsV2Command({
-          Bucket: R2_BUCKET_NAME,
-        })
+      // Use aws4fetch to list objects
+      const response = await client.fetch(
+        `${R2_ENDPOINT}/${R2_BUCKET_NAME}?list-type=2`
       );
 
-      return (
-        result.Contents?.map((obj) => ({
-          key: obj.Key!,
-          size: obj.Size || 0,
-          uploaded: obj.LastModified || new Date(),
-          url: `https://${R2_BUCKET_NAME}.r2.cloudflarestorage.com/${obj.Key}`,
-        })) ?? []
-      );
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const xmlText = await response.text();
+      
+      // Parse XML response to extract object information
+      const documents = parseListObjectsXml(xmlText);
+      return documents;
     } catch (err) {
       console.warn(`R2 list attempt ${attempt} failed:`, err);
       if (attempt < MAX_RETRIES) {
@@ -59,12 +86,12 @@ export async function listDocumentsFromR2(): Promise<R2Document[]> {
 }
 
 // Alternative function using Cloudflare R2 bindings (for Cloudflare Workers environment)
-export async function listDocumentsFromR2Binding(env: Env): Promise<R2Document[]> {
+export async function listDocumentsFromR2Binding(env: any): Promise<R2Document[]> {
   try {
     const r2Bucket = env["vm-personal-r2"];
     const objects = await r2Bucket.list();
     
-    return objects.objects.map((obj) => ({
+    return objects.objects.map((obj: any) => ({
       key: obj.key,
       size: obj.size,
       uploaded: obj.uploaded,
@@ -77,14 +104,15 @@ export async function listDocumentsFromR2Binding(env: Env): Promise<R2Document[]
 }
 
 // Alias for backward compatibility
-export const fetchDocumentsFromR2 = listDocumentsFromR2;
+export const fetchDocumentsFromR2 = getDocumentsFromR2;
 
 // Smart function that detects environment and uses appropriate method
-export async function getDocumentsFromR2(env?: Env): Promise<R2Document[]> {
+export async function getDocumentsFromR2(env?: any): Promise<R2Document[]> {
   // If env is provided and we have R2 binding, use it (Cloudflare Workers environment)
-  // if (env && env["vm-personal-r2"]) {
-  //   return listDocumentsFromR2Binding(env);
-  // }  
+  if (env && env["vm-personal-r2"]) {
+    return listDocumentsFromR2Binding(env);
+  }
+
   // Otherwise, use S3-compatible API (local development or other environments)
   return listDocumentsFromR2();
 }
@@ -93,28 +121,26 @@ export async function getDocumentsFromR2(env?: Env): Promise<R2Document[]> {
 // This will likely involve fetching the text file from R2 and parsing it
 // Import GetObjectCommand for fetching file contents
 
-// Get file content using S3-compatible API
+// Get file content using aws4fetch
 export async function getFileContentUsingS3Api(filePath: string): Promise<string> {
-  const s3 = new S3Client({
+  const client = new AwsClient({
+    service: "s3",
     region: "auto",
-    endpoint: R2_ENDPOINT,
-    credentials: {
-      accessKeyId: process.env.R2_ACCESS_KEY!,
-      secretAccessKey: process.env.R2_SECRET_KEY!,
-    },
+    accessKeyId: process.env.R2_ACCESS_KEY!,
+    secretAccessKey: process.env.R2_SECRET_KEY!,
   });
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const result = await s3.send(
-        new GetObjectCommand({
-          Bucket: R2_BUCKET_NAME,
-          Key: filePath,
-        })
+      const response = await client.fetch(
+        `${R2_ENDPOINT}/${R2_BUCKET_NAME}/${filePath}`
       );
       
-      // Convert the stream to text
-      const bodyContents = await result.Body?.transformToString();
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const bodyContents = await response.text();
       if (!bodyContents) {
         throw new Error(`Empty file content for ${filePath}`);
       }
@@ -134,7 +160,7 @@ export async function getFileContentUsingS3Api(filePath: string): Promise<string
 }
 
 // Get file content using Cloudflare R2 bindings
-export async function getFileContentUsingR2Binding(filePath: string, env: Env): Promise<string> {
+export async function getFileContentUsingR2Binding(filePath: string, env: any): Promise<string> {
   try {
     const r2Bucket = env["vm-personal-r2"];
     const object = await r2Bucket.get(filePath);
@@ -151,11 +177,12 @@ export async function getFileContentUsingR2Binding(filePath: string, env: Env): 
 }
 
 // Smart function that detects environment and uses appropriate method
-export async function getFileFromR2(filePath: string, env?: Env): Promise<string> {
+export async function getFileFromR2(filePath: string, env?: any): Promise<string> {
   // If env is provided and we have R2 binding, use it (Cloudflare Workers environment)
-  // if (env && env["vm-personal-r2"]) {
-  //   return getFileContentUsingR2Binding(filePath, env);
-  // }  
+  if (env && env["vm-personal-r2"]) {
+    return getFileContentUsingR2Binding(filePath, env);
+  }
+
   // Otherwise, use S3-compatible API (local development or other environments)
   return getFileContentUsingS3Api(filePath);
 }
@@ -215,7 +242,7 @@ export async function fetchYoutubeOembedData(oembedUrl: string): Promise<YouTube
  * @param env Optional R2 environment bindings
  * @returns Map of youtube metadata objects
  */
-export async function getYoutubeVideosFromR2File(filePath: string, env?: Env): Promise<Map<string, YouTubeOEmbedResponse>> {
+export async function getYoutubeVideosFromR2File(filePath: string, env?: any): Promise<Map<string, YouTubeOEmbedResponse>> {
   try {
     // Fetch the file content from R2
     const fileContent = await getFileFromR2(filePath, env);
