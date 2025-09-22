@@ -3,6 +3,8 @@ import { MaterialContentClient } from './material-content';
 import { notFound } from 'next/navigation';
 import type { Metadata, ResolvingMetadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 interface MaterialPageProps {
   params: {
     grade: string;

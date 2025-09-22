@@ -3,6 +3,8 @@ import type { ResourceCategory } from '@/types';
 import { ResourceCategoryCard } from '@/components/cards/resource-category-card';
 import type { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Resources',
 };
