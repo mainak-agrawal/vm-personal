@@ -201,11 +201,19 @@ async function populateAvailableResources(): Promise<void> {
   }
 }
 
+export async function ensureDataInitialized(): Promise<void> {
+  // If no data is loaded, force re-initialization
+  if (resourceCategories.length === 0) {
+    console.log('[DEBUG] No data found, re-initializing...');
+    await populateAvailableResources();
+  }
+}
 
 // --- Main Data Fetching Functions ---
 export async function getMaterialContent(gradeSlug: string, topicSlug: string): Promise<MaterialContent | null> {
   // Ensure initialization is complete before returning data
   await initializationPromise;
+  await ensureDataInitialized();
   const contentKey = `${gradeSlug}/${topicSlug}`;
   return materialPerCategory.get(contentKey) || null;
 }
@@ -213,6 +221,7 @@ export async function getMaterialContent(gradeSlug: string, topicSlug: string): 
 export async function getTopicsForGradeSubject(gradeSlug: string): Promise<TopicCategory[]> {
   // Ensure initialization is complete before returning data
   await initializationPromise;
+  await ensureDataInitialized();
   return topicCategories.get(gradeSlug) || [];
 }
 
@@ -224,5 +233,6 @@ export async function getTeacherProfile(): Promise<TeacherProfile> {
 export async function getResourceCategories(): Promise<ResourceCategory[]> {
   // Ensure initialization is complete before returning data
   await initializationPromise;
+  await ensureDataInitialized();
   return resourceCategories;
 }
