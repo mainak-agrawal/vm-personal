@@ -88,7 +88,7 @@ export async function listDocumentsFromR2(): Promise<R2Document[]> {
 // Alternative function using Cloudflare R2 bindings (for Cloudflare Workers environment)
 export async function listDocumentsFromR2Binding(env: any): Promise<R2Document[]> {
   try {
-    const r2Bucket = env["vm-personal-r2"];
+    const r2Bucket = env.VM_PERSONAL_R2;
     const objects = await r2Bucket.list();
     
     return objects.objects.map((obj: any) => ({
@@ -109,7 +109,7 @@ export const fetchDocumentsFromR2 = getDocumentsFromR2;
 // Smart function that detects environment and uses appropriate method
 export async function getDocumentsFromR2(env?: any): Promise<R2Document[]> {
   // If env is provided and we have R2 binding, use it (Cloudflare Workers environment)
-  if (env && env["vm-personal-r2"]) {
+  if (env && env.VM_PERSONAL_R2) {
     return listDocumentsFromR2Binding(env);
   }
 
@@ -162,7 +162,7 @@ export async function getFileContentUsingS3Api(filePath: string): Promise<string
 // Get file content using Cloudflare R2 bindings
 export async function getFileContentUsingR2Binding(filePath: string, env: any): Promise<string> {
   try {
-    const r2Bucket = env["vm-personal-r2"];
+    const r2Bucket = env.VM_PERSONAL_R2;
     const object = await r2Bucket.get(filePath);
     
     if (!object) {
@@ -179,7 +179,7 @@ export async function getFileContentUsingR2Binding(filePath: string, env: any): 
 // Smart function that detects environment and uses appropriate method
 export async function getFileFromR2(filePath: string, env?: any): Promise<string> {
   // If env is provided and we have R2 binding, use it (Cloudflare Workers environment)
-  if (env && env["vm-personal-r2"]) {
+  if (env && env.VM_PERSONAL_R2) {
     return getFileContentUsingR2Binding(filePath, env);
   }
 

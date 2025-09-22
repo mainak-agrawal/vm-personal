@@ -19,9 +19,8 @@
   },
   "r2_buckets": [
     {
-      "binding": "vm-personal-r2",
-      "bucket_name": "vm-personal-website",
-      "preview_bucket_name": "vm-personal-website"
+      "binding": "VM_PERSONAL_R2",
+      "bucket_name": "vm-personal-website"
     }
   ]
 }
