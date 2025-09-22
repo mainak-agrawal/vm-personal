@@ -5,7 +5,7 @@ import { fetchDocumentsFromR2, getYoutubeVideosFromR2File } from "./utils";
 const teacherProfile: TeacherProfile = {
   name: 'Vishva Mohan',
   title: 'Coach, Mentor, Guide.',
-  photoUrl: 'https://vishvamohan.com/assets/img/vishva_photo.JPG',
+  photoUrl: '/vishva_photo.jpg',
   bio: 'An Ex-DM and Spl. Commissioner, Govt. of Delhi, Shri Vishva Mohan has a deep passion for teaching and mentoring. His profile is summarized below:',
   academicProfiles: [
     {
