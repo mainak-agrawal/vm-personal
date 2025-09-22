@@ -76,20 +76,61 @@ function extractYouTubeVideoId(url: string): string | null {
   return null;
 }
 
-// Initialize data when the module is loaded with error handling
-const initializationPromise = populateAvailableResources().catch((error) => {
-  console.error('Failed to initialize R2 data:', error);
-  // Don't throw here - let the app continue with empty data
-  return Promise.resolve();
-});
+// Initialization state tracking
+let isInitializing = false;
+let isInitialized = false;
+let initializationError: Error | null = null;
+
+let initializationPromise: Promise<void> | null = null;
+
+// Function to get or create the initialization promise
+function getInitializationPromise(): Promise<void> {
+  if (!initializationPromise) {
+    initializationPromise = populateAvailableResources();
+  }
+  return initializationPromise;
+}
 
 async function populateAvailableResources(): Promise<void> {
+  if (isInitialized) {
+    console.log('[DEBUG] Data already initialized, skipping...');
+    return;
+  }
+
+  // If currently initializing, wait for it to complete
+  if (isInitializing) {
+    console.log('[DEBUG] Initialization already in progress, waiting...');
+    // Wait for the current initialization to complete
+    while (isInitializing && !isInitialized) {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    return;
+  }
+
+  isInitializing = true;
+  console.log('[DEBUG] Starting data initialization...');
+
   try {
-    const resources = await fetchDocumentsFromR2();
+    // Add timeout wrapper for R2 calls
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('R2 data fetch timeout after 30 seconds')), 30000);
+    });
+
+    const resources = await Promise.race([
+      fetchDocumentsFromR2(),
+      timeoutPromise
+    ]);
+
     if (resources.length == 0) {
       console.warn('No resources found in R2 bucket.');
+      isInitialized = true; // Mark as initialized even with empty data
       return;
     }
+
+    // Clear existing data to ensure clean state
+    resourceCategories.length = 0;
+    topicCategories.clear();
+    materialPerCategory.clear();
 
     console.log(`Found ${resources.length} resources in R2 bucket.`);
     for (const resource of resources) {
@@ -150,7 +191,14 @@ async function populateAvailableResources(): Promise<void> {
       {
         // Populate the videos array based on the YouTube URLs in the file
         try {
-          const videoMap = await getYoutubeVideosFromR2File(resource.key);
+          const videoTimeoutPromise = new Promise<never>((_, reject) => {
+            setTimeout(() => reject(new Error('YouTube video fetch timeout')), 15000);
+          });
+
+          const videoMap = await Promise.race([
+            getYoutubeVideosFromR2File(resource.key),
+            videoTimeoutPromise
+          ]);
           
           // Convert YouTube metadata to VideoResource objects
           let videoIndex = 0;
@@ -174,6 +222,7 @@ async function populateAvailableResources(): Promise<void> {
           console.log(`Added ${videoIndex} videos for ${contentKey}`);
         } catch (error) {
           console.error(`Failed to process videos.txt for ${contentKey}:`, error);
+          // Continue processing other files even if video processing fails
         }
       }
       else
@@ -195,39 +244,56 @@ async function populateAvailableResources(): Promise<void> {
         });
       }
     }
+
+    isInitialized = true;
+    console.log('[DEBUG] Data initialization completed successfully');
   } catch (error) {
     console.error('Error populating resources from R2:', error);
-    throw error; // Re-throw to be caught by initializationPromise
+    initializationError = error as Error;
+    // Don't throw - let the app continue with empty data
+  } finally {
+    isInitializing = false;
   }
 }
 
+// Start initialization immediately when module loads
+getInitializationPromise().catch((error) => {
+  console.error('Failed to initialize R2 data:', error);
+  initializationError = error;
+});
+
 export async function ensureDataInitialized(): Promise<void> {
-  // If no data is loaded, force re-initialization
-  if (resourceCategories.length === 0) {
-    console.log('[DEBUG] No data found, re-initializing...');
-    try {
-      await populateAvailableResources();
-    }
-    catch (error) {
-      console.error('Error in ensureDataInitialized: ', error);
-    }
+  // Always wait for the single initialization promise
+  await getInitializationPromise();
+  
+  // If initialization failed with an error, show warning
+  if (initializationError) {
+    console.warn('[DEBUG] Data initialization failed:', initializationError.message);
   }
 }
 
 // --- Main Data Fetching Functions ---
 export async function getMaterialContent(gradeSlug: string, topicSlug: string): Promise<MaterialContent | null> {
-  // Ensure initialization is complete before returning data
-  await initializationPromise;
-  await ensureDataInitialized();
-  const contentKey = `${gradeSlug}/${topicSlug}`;
-  return materialPerCategory.get(contentKey) || null;
+  try {
+    // Ensure initialization is complete before returning data
+    await ensureDataInitialized();
+    const contentKey = `${gradeSlug}/${topicSlug}`;
+    return materialPerCategory.get(contentKey) || null;
+  } catch (error) {
+    console.error('Error in getMaterialContent:', error);
+    return null;
+  }
 }
 
 export async function getTopicsForGradeSubject(gradeSlug: string): Promise<TopicCategory[]> {
-  // Ensure initialization is complete before returning data
-  await initializationPromise;
-  await ensureDataInitialized();
-  return topicCategories.get(gradeSlug) || [];
+  try {
+    // Ensure initialization is complete before returning data
+    await ensureDataInitialized();
+    return topicCategories.get(gradeSlug) || [];
+  } catch (error) {
+    console.error('Error in getTopicsForGradeSubject:', error);
+    return [];
+  }
 }
 
 export async function getTeacherProfile(): Promise<TeacherProfile> {
@@ -236,8 +302,12 @@ export async function getTeacherProfile(): Promise<TeacherProfile> {
 }
 
 export async function getResourceCategories(): Promise<ResourceCategory[]> {
-  // Ensure initialization is complete before returning data
-  await initializationPromise;
-  await ensureDataInitialized();
-  return resourceCategories;
+  try {
+    // Ensure initialization is complete before returning data
+    await ensureDataInitialized();
+    return resourceCategories;
+  } catch (error) {
+    console.error('Error in getResourceCategories:', error);
+    return [];
+  }
 }

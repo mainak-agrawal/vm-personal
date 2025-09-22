@@ -3,8 +3,6 @@ import type { TopicCategory } from '@/types';
 import { TopicsListClient } from './topics-list';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
-
 interface TopicsPageProps {
   params: {
     grade: string;

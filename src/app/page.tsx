@@ -8,8 +8,6 @@ import type { TeacherProfile, AcademicProfile, ProfessionalProfileSection } from
 import { ArrowRight, Dot } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
-
 export const metadata: Metadata = {
   title: 'Home',
 };

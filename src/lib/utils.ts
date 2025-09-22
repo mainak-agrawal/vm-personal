@@ -245,6 +245,7 @@ export async function fetchYoutubeOembedData(oembedUrl: string): Promise<YouTube
 export async function getYoutubeVideosFromR2File(filePath: string, env?: any): Promise<Map<string, YouTubeOEmbedResponse>> {
   try {
     // Fetch the file content from R2
+    console.log("Getting videos list: ", filePath);
     const fileContent = await getFileFromR2(filePath, env);
     
     // Split the content by lines and filter out any empty lines
@@ -259,11 +260,13 @@ export async function getYoutubeVideosFromR2File(filePath: string, env?: any): P
       const trimmedUrl = url.trim();
       if (trimmedUrl) {
       const oembedUrl = createYoutubeOembedUrl(trimmedUrl);
+      console.log("Getting metadata for video from ", oembedUrl);
       const oembedData = await fetchYoutubeOembedData(oembedUrl);
       videoMap.set(trimmedUrl, oembedData);
       }
     }
-    
+
+    console.log("Returning %d videos", videoMap.size);
     return videoMap;
   } catch (error) {
     console.error(`Error processing YouTube videos from ${filePath}:`, error);
