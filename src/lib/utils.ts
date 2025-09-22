@@ -82,10 +82,9 @@ export const fetchDocumentsFromR2 = listDocumentsFromR2;
 // Smart function that detects environment and uses appropriate method
 export async function getDocumentsFromR2(env?: Env): Promise<R2Document[]> {
   // If env is provided and we have R2 binding, use it (Cloudflare Workers environment)
-  if (env && env["vm-personal-r2"]) {
-    return listDocumentsFromR2Binding(env);
-  }
-  
+  // if (env && env["vm-personal-r2"]) {
+  //   return listDocumentsFromR2Binding(env);
+  // }  
   // Otherwise, use S3-compatible API (local development or other environments)
   return listDocumentsFromR2();
 }
@@ -154,10 +153,9 @@ export async function getFileContentUsingR2Binding(filePath: string, env: Env): 
 // Smart function that detects environment and uses appropriate method
 export async function getFileFromR2(filePath: string, env?: Env): Promise<string> {
   // If env is provided and we have R2 binding, use it (Cloudflare Workers environment)
-  if (env && env["vm-personal-r2"]) {
-    return getFileContentUsingR2Binding(filePath, env);
-  }
-  
+  // if (env && env["vm-personal-r2"]) {
+  //   return getFileContentUsingR2Binding(filePath, env);
+  // }  
   // Otherwise, use S3-compatible API (local development or other environments)
   return getFileContentUsingS3Api(filePath);
 }

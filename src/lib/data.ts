@@ -205,7 +205,12 @@ export async function ensureDataInitialized(): Promise<void> {
   // If no data is loaded, force re-initialization
   if (resourceCategories.length === 0) {
     console.log('[DEBUG] No data found, re-initializing...');
-    await populateAvailableResources();
+    try {
+      await populateAvailableResources();
+    }
+    catch (error) {
+      console.error('Error in ensureDataInitialized: ', error);
+    }
   }
 }
 
