@@ -48,3 +48,7 @@ worker-configuration.d.ts
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# static artifacts
+/src/lib/static-data.json
+/src/lib/static-params.json

@@ -1,6 +1,7 @@
-
 import type { TeacherProfile, ResourceCategory, TopicCategory, MaterialContent, VideoResource, DocumentIconName, DocumentType } from '@/types';
 import { fetchDocumentsFromR2, getYoutubeVideosFromR2File } from "./utils";
+
+const R2_CUSTOM_DOMAIN = "https://vm-personal-website.r2.vishvamohan.com";
 
 const teacherProfile: TeacherProfile = {
   name: 'Vishva Mohan',
@@ -55,10 +56,6 @@ const teacherProfile: TeacherProfile = {
   ],
 };
 
-let materialPerCategory = new Map<string, MaterialContent>();
-let resourceCategories = new Array<ResourceCategory>();
-let topicCategories = new Map<string, TopicCategory[]>(); // Map from gradeSubject to topics
-
 // Helper function to extract YouTube video ID from URL
 function extractYouTubeVideoId(url: string): string | null {
   const patterns = [
@@ -76,40 +73,27 @@ function extractYouTubeVideoId(url: string): string | null {
   return null;
 }
 
-// Initialization state tracking
-let isInitializing = false;
-let isInitialized = false;
-let initializationError: Error | null = null;
-
-let initializationPromise: Promise<void> | null = null;
-
-// Function to get or create the initialization promise
-function getInitializationPromise(): Promise<void> {
-  if (!initializationPromise) {
-    initializationPromise = populateAvailableResources();
-  }
-  return initializationPromise;
+// Helper function to convert R2 URL to custom domain URL
+function convertToCustomDomainUrl(r2Url: string): string {
+  // Replace the R2 domain with the custom domain while keeping the path
+  return r2Url.replace(/https:\/\/[^\/]+/, R2_CUSTOM_DOMAIN);
 }
 
-async function populateAvailableResources(): Promise<void> {
-  if (isInitialized) {
-    console.log('[DEBUG] Data already initialized, skipping...');
-    return;
-  }
+// Static data containers - these will be populated from JSON at runtime
+let staticData: {
+  resourceCategories: ResourceCategory[];
+  topicCategories: Record<string, TopicCategory[]>;
+  materialPerCategory: Record<string, MaterialContent>;
+} | null = null;
 
-  // If currently initializing, wait for it to complete
-  if (isInitializing) {
-    console.log('[DEBUG] Initialization already in progress, waiting...');
-    // Wait for the current initialization to complete
-    while (isInitializing && !isInitialized) {
-      await new Promise(resolve => setTimeout(resolve, 50));
-    }
-    return;
-  }
-
-  isInitializing = true;
-  console.log('[DEBUG] Starting data initialization...');
-
+// Build-time data population function (used by the build script)
+export async function populateStaticData(): Promise<{
+  resourceCategories: ResourceCategory[];
+  topicCategories: Record<string, TopicCategory[]>;
+  materialPerCategory: Record<string, MaterialContent>;
+}> {
+  console.log('[BUILD] Starting static data population...');
+  
   try {
     // Add timeout wrapper for R2 calls
     const timeoutPromise = new Promise<never>((_, reject) => {
@@ -121,22 +105,25 @@ async function populateAvailableResources(): Promise<void> {
       timeoutPromise
     ]);
 
-    if (resources.length == 0) {
-      console.warn('No resources found in R2 bucket.');
-      isInitialized = true; // Mark as initialized even with empty data
-      return;
+    if (resources.length === 0) {
+      console.warn('[BUILD] No resources found in R2 bucket.');
+      return {
+        resourceCategories: [],
+        topicCategories: {},
+        materialPerCategory: {}
+      };
     }
 
-    // Clear existing data to ensure clean state
-    resourceCategories.length = 0;
-    topicCategories.clear();
-    materialPerCategory.clear();
+    const resourceCategories: ResourceCategory[] = [];
+    const topicCategories = new Map<string, TopicCategory[]>();
+    const materialPerCategory = new Map<string, MaterialContent>();
 
-    console.log(`Found ${resources.length} resources in R2 bucket.`);
+    console.log(`[BUILD] Found ${resources.length} resources in R2 bucket.`);
+    
     for (const resource of resources) {
       const parts = resource.key.split('/');
-      if (parts.length != 3) {
-        console.warn(`Skipping resource with unexpected key format: ${resource.key}`);
+      if (parts.length !== 3) {
+        console.warn(`[BUILD] Skipping resource with unexpected key format: ${resource.key}`);
         continue;
       }
 
@@ -147,8 +134,8 @@ async function populateAvailableResources(): Promise<void> {
       if (!resourceCategories.some(category => category.gradesub === gradesub)) {
         resourceCategories.push({
           gradesub: gradesub,
-          title: `Class ${grade.toUpperCase()} | ${subject.toUpperCase()}`,
-          description: `Study material for Class ${grade.toUpperCase()} - ${subject.toUpperCase()}.`,
+          title: `Class ${grade.toUpperCase()} | ${subject.replace(/_/g, ' ').toUpperCase()}`,
+          description: `Study material for Class ${grade.toUpperCase()} - ${subject.replace(/_/g, ' ').toUpperCase()}.`,
           slug: gradesub,
         });
       }
@@ -160,11 +147,12 @@ async function populateAvailableResources(): Promise<void> {
       
       const existingTopics = topicCategories.get(gradesub)!;
       if (!existingTopics.some(topic => topic.slug === topicName)) {
-        const displayName = topicName.replace(/_/g, ' ').charAt(0).toUpperCase() + topicName.replace(/_/g, ' ').slice(1);
+        const displayName = topicName.replace(/_/g, ' ');
+        const capitalizedName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
         existingTopics.push({
           id: `${gradesub}-${topicName}`,
-          name: displayName, // Capitalize first letter and replace underscores
-          description: `Study materials for ${displayName} in Class ${grade.toUpperCase()} ${subject.toUpperCase()}`,
+          name: capitalizedName,
+          description: `Study materials for ${capitalizedName} in Class ${grade.toUpperCase()} ${subject.replace(/_/g, ' ').toUpperCase()}`,
           slug: topicName,
           gradeSubject: gradesub,
         });
@@ -174,10 +162,11 @@ async function populateAvailableResources(): Promise<void> {
       const contentKey = `${gradesub}/${topicName}`;
       
       if (!materialPerCategory.has(contentKey)) {
-        const displayName = topicName.replace(/_/g, ' ').charAt(0).toUpperCase() + topicName.replace(/_/g, ' ').slice(1);
+        const displayName = topicName.replace(/_/g, ' ');
+        const capitalizedName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
         materialPerCategory.set(contentKey, {
-          title: `${displayName} - Class ${grade.toUpperCase()} ${subject.toUpperCase()}`,
-          description: `Videos and documents for ${displayName} in Class ${grade.toUpperCase()} ${subject.toUpperCase()}`,
+          title: `${capitalizedName} - Class ${grade.toUpperCase()} ${subject.replace(/_/g, ' ').toUpperCase()}`,
+          description: `Videos and documents for ${capitalizedName} in Class ${grade.toUpperCase()} ${subject.replace(/_/g, ' ').toUpperCase()}`,
           topic: topicName,
           gradeSubject: gradesub,
           videos: [],
@@ -187,8 +176,7 @@ async function populateAvailableResources(): Promise<void> {
 
       const materialContent = materialPerCategory.get(contentKey)!;
 
-      if (filename == "videos.txt")
-      {
+      if (filename === "videos.txt") {
         // Populate the videos array based on the YouTube URLs in the file
         try {
           const videoTimeoutPromise = new Promise<never>((_, reject) => {
@@ -212,102 +200,98 @@ async function populateAvailableResources(): Promise<void> {
                 description: `By ${metadata.author_name}`,
                 thumbnailUrl: metadata.thumbnail_url,
                 embedUrl: `https://www.youtube.com/embed/${videoId}`,
-                duration: '', // Duration not available from oEmbed API
+                duration: '',
                 uploadDate: resource.uploaded.toISOString(),
               });
               videoIndex++;
             }
           }
           
-          console.log(`Added ${videoIndex} videos for ${contentKey}`);
+          console.log(`[BUILD] Added ${videoIndex} videos for ${contentKey}`);
         } catch (error) {
-          console.error(`Failed to process videos.txt for ${contentKey}:`, error);
-          // Continue processing other files even if video processing fails
+          console.error(`[BUILD] Failed to process videos.txt for ${contentKey}:`, error);
         }
-      }
-      else
-      {
+      } else {
         const fileExtension = filename.split('.').pop()?.toLowerCase() || '';
         let icon: DocumentIconName = 'File';
         let type: DocumentType = 'file';
         if (['pdf'].includes(fileExtension)) { icon = 'FileText'; type = 'pdf'; }
         else if (['doc', 'docx'].includes(fileExtension)) { icon = 'FileArchive'; type = fileExtension as DocumentType; }
         else if (['txt'].includes(fileExtension)) { icon = 'FileText'; type = 'txt'; }
+        
         materialContent.documents.push({
           id: resource.key,
           title: filename,
           type: type,
           icon: icon,
-          downloadUrl: resource.url,
+          downloadUrl: convertToCustomDomainUrl(resource.url),
           uploadDate: resource.uploaded.toISOString(),
           fileSize: `${(resource.size / 1024).toFixed(2)} KB`,
         });
       }
     }
 
-    isInitialized = true;
-    console.log('[DEBUG] Data initialization completed successfully');
+    console.log(`[BUILD] Static data population completed - ${resourceCategories.length} categories, ${topicCategories.size} topic groups, ${materialPerCategory.size} material items`);
+
+    // Convert Maps to plain objects for serialization
+    const topicCategoriesObj: Record<string, TopicCategory[]> = {};
+    for (const [key, value] of topicCategories.entries()) {
+      topicCategoriesObj[key] = value;
+    }
+
+    const materialPerCategoryObj: Record<string, MaterialContent> = {};
+    for (const [key, value] of materialPerCategory.entries()) {
+      materialPerCategoryObj[key] = value;
+    }
+
+    return {
+      resourceCategories,
+      topicCategories: topicCategoriesObj,
+      materialPerCategory: materialPerCategoryObj
+    };
   } catch (error) {
-    console.error('Error populating resources from R2:', error);
-    initializationError = error as Error;
-    // Don't throw - let the app continue with empty data
-  } finally {
-    isInitializing = false;
+    console.error('[BUILD] Error populating static data:', error);
+    throw error;
   }
 }
 
-// Start initialization immediately when module loads
-getInitializationPromise().catch((error) => {
-  console.error('Failed to initialize R2 data:', error);
-  initializationError = error;
-});
-
-export async function ensureDataInitialized(): Promise<void> {
-  // Always wait for the single initialization promise
-  await getInitializationPromise();
+// Function to load static data from JSON (used at runtime)
+function loadStaticData() {
+  if (staticData) return staticData;
   
-  // If initialization failed with an error, show warning
-  if (initializationError) {
-    console.warn('[DEBUG] Data initialization failed:', initializationError.message);
-  }
-}
-
-// --- Main Data Fetching Functions ---
-export async function getMaterialContent(gradeSlug: string, topicSlug: string): Promise<MaterialContent | null> {
   try {
-    // Ensure initialization is complete before returning data
-    await ensureDataInitialized();
-    const contentKey = `${gradeSlug}/${topicSlug}`;
-    return materialPerCategory.get(contentKey) || null;
+    // Try to load the static data JSON file
+    staticData = require('./static-data.json');
+    console.log('[RUNTIME] Loaded static data from JSON file');
+    return staticData!;
   } catch (error) {
-    console.error('Error in getMaterialContent:', error);
-    return null;
+    console.warn('[RUNTIME] Static data JSON not found, using empty data:', error);
+    staticData = {
+      resourceCategories: [],
+      topicCategories: {},
+      materialPerCategory: {}
+    };
+    return staticData;
   }
 }
 
-export async function getTopicsForGradeSubject(gradeSlug: string): Promise<TopicCategory[]> {
-  try {
-    // Ensure initialization is complete before returning data
-    await ensureDataInitialized();
-    return topicCategories.get(gradeSlug) || [];
-  } catch (error) {
-    console.error('Error in getTopicsForGradeSubject:', error);
-    return [];
-  }
-}
-
+// Runtime data access functions (these use the pre-built static data)
 export async function getTeacherProfile(): Promise<TeacherProfile> {
-  // Teacher profile doesn't depend on R2 data, but keeping async for consistency
   return teacherProfile;
 }
 
 export async function getResourceCategories(): Promise<ResourceCategory[]> {
-  try {
-    // Ensure initialization is complete before returning data
-    await ensureDataInitialized();
-    return resourceCategories;
-  } catch (error) {
-    console.error('Error in getResourceCategories:', error);
-    return [];
-  }
+  const data = loadStaticData();
+  return data.resourceCategories;
+}
+
+export async function getTopicsForGradeSubject(gradeSlug: string): Promise<TopicCategory[]> {
+  const data = loadStaticData();
+  return data.topicCategories[gradeSlug] || [];
+}
+
+export async function getMaterialContent(gradeSlug: string, topicSlug: string): Promise<MaterialContent | null> {
+  const data = loadStaticData();
+  const contentKey = `${gradeSlug}/${topicSlug}`;
+  return data.materialPerCategory[contentKey] || null;
 }

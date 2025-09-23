@@ -3,6 +3,28 @@ import { MaterialContentClient } from './material-content';
 import { notFound } from 'next/navigation';
 import type { Metadata, ResolvingMetadata } from 'next';
 
+// Import static params for build-time generation
+let staticParams: { topicParams: Array<{ grade: string; subject: string }> } | null = null;
+
+function loadStaticParams() {
+  if (staticParams) return staticParams;
+  
+  try {
+    staticParams = require('@/lib/static-params.json');
+    return staticParams!;
+  } catch (error) {
+    console.warn('Static params not found, using empty array');
+    return { topicParams: [] };
+  }
+}
+
+// Generate static params for all grade/topic combinations
+export async function generateStaticParams() {
+  const params = loadStaticParams();
+  console.log('[BUILD] Generating static params for topics:', params.topicParams.length);
+  return params.topicParams;
+}
+
 interface MaterialPageProps {
   params: {
     grade: string;
