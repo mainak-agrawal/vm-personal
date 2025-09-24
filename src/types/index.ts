@@ -45,8 +45,8 @@ export interface VideoResource {
   uploadDate?: string; // ISO date string, conceptually from XML file's modifiedTime or data within XML
 }
 
-export type DocumentType = 'pdf' | 'doc' | 'docx' | 'txt' | 'file'; // 'file' for generic/unknown
-export type DocumentIconName = 'File' | 'FileArchive' | 'FileText';
+export type DocumentType = 'pdf' | 'doc' | 'docx' | 'txt' | 'xls' | 'xlsx' | 'ppt' | 'pptx' | 'zip' | 'rar' | 'jpg' | 'jpeg' | 'png' | 'gif' | 'mp4' | 'mp3' | 'file'; // 'file' for generic/unknown
+export type DocumentIconName = 'FileText' | 'FileArchive' | 'FileSpreadsheet' | 'FileImage' | 'FileVideo' | 'FileAudio' | 'FileType' | 'File';
 
 export interface DocumentResource {
   id: string; // Will be Google Drive File ID

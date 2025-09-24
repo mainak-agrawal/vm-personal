@@ -79,6 +79,66 @@ function convertToCustomDomainUrl(r2Url: string): string {
   return r2Url.replace(/https:\/\/[^\/]+/, R2_CUSTOM_DOMAIN);
 }
 
+// Helper function to determine file icon and type based on extension
+function getFileIconAndType(filename: string): { icon: DocumentIconName; type: DocumentType } {
+  const fileExtension = filename.split('.').pop()?.toLowerCase() || '';
+  let icon: DocumentIconName = 'File';
+  let type: DocumentType = 'file';
+  
+  // PDF files
+  if (['pdf'].includes(fileExtension)) { 
+    icon = 'FileType'; 
+    type = 'pdf'; 
+  }
+  // Word documents
+  else if (['doc', 'docx'].includes(fileExtension)) { 
+    icon = 'FileText'; 
+    type = fileExtension as DocumentType; 
+  }
+  // Excel spreadsheets
+  else if (['xls', 'xlsx'].includes(fileExtension)) { 
+    icon = 'FileSpreadsheet'; 
+    type = fileExtension as DocumentType; 
+  }
+  // PowerPoint presentations
+  else if (['ppt', 'pptx'].includes(fileExtension)) { 
+    icon = 'FileArchive'; 
+    type = fileExtension as DocumentType; 
+  }
+  // Archive files
+  else if (['zip', 'rar', '7z', 'tar', 'gz'].includes(fileExtension)) { 
+    icon = 'FileArchive'; 
+    type = fileExtension as DocumentType; 
+  }
+  // Image files
+  else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(fileExtension)) { 
+    icon = 'FileImage'; 
+    type = fileExtension as DocumentType; 
+  }
+  // Video files
+  else if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'].includes(fileExtension)) { 
+    icon = 'FileVideo'; 
+    type = fileExtension as DocumentType; 
+  }
+  // Audio files
+  else if (['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'].includes(fileExtension)) { 
+    icon = 'FileAudio'; 
+    type = fileExtension as DocumentType; 
+  }
+  // Text files
+  else if (['txt', 'md', 'rtf'].includes(fileExtension)) { 
+    icon = 'FileText'; 
+    type = fileExtension as DocumentType; 
+  }
+  // Default for unknown file types
+  else {
+    icon = 'File';
+    type = 'file';
+  }
+  
+  return { icon, type };
+}
+
 // Static data containers - these will be populated from JSON at runtime
 let staticData: {
   resourceCategories: ResourceCategory[];
@@ -212,12 +272,7 @@ export async function populateStaticData(): Promise<{
           console.error(`[BUILD] Failed to process videos.txt for ${contentKey}:`, error);
         }
       } else {
-        const fileExtension = filename.split('.').pop()?.toLowerCase() || '';
-        let icon: DocumentIconName = 'File';
-        let type: DocumentType = 'file';
-        if (['pdf'].includes(fileExtension)) { icon = 'FileText'; type = 'pdf'; }
-        else if (['doc', 'docx'].includes(fileExtension)) { icon = 'FileArchive'; type = fileExtension as DocumentType; }
-        else if (['txt'].includes(fileExtension)) { icon = 'FileText'; type = 'txt'; }
+        const { icon, type } = getFileIconAndType(filename);
         
         materialContent.documents.push({
           id: resource.key,

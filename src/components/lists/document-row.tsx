@@ -1,6 +1,18 @@
 import { Button } from '@/components/ui/button';
 import type { DocumentResource, DocumentIconName } from '@/types';
-import { Download, CalendarDays, File, FileText, FileArchive, type LucideIcon } from 'lucide-react';
+import { 
+  Download, 
+  CalendarDays, 
+  File, 
+  FileText, 
+  FileArchive, 
+  FileSpreadsheet, 
+  FileImage, 
+  FileVideo, 
+  FileAudio,
+  FileType,
+  type LucideIcon 
+} from 'lucide-react';
 import { format } from 'date-fns';
 
 interface DocumentRowProps {
@@ -11,6 +23,11 @@ const iconMap: Record<DocumentIconName, LucideIcon> = {
   File: File,
   FileText: FileText,
   FileArchive: FileArchive,
+  FileSpreadsheet: FileSpreadsheet,
+  FileImage: FileImage,
+  FileVideo: FileVideo,
+  FileAudio: FileAudio,
+  FileType: FileType,
 };
 
 export function DocumentRow({ document }: DocumentRowProps) {
