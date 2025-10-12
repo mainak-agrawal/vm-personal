@@ -15,6 +15,9 @@ export function Navbar() {
             <Link href="/resources" className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
               Resources
             </Link>
+            <Link href="/contact" className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
+              Contact
+            </Link>
           </nav>
         </div>
       </div>

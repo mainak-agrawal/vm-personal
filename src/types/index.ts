@@ -2,12 +2,14 @@
 import type { LucideIcon } from 'lucide-react';
 
 export interface AcademicProfile {
-  degree: string; // e.g., "B.Tech, IIT Delhi (1988)"
-  points: string[]; // e.g., ["All India JEE Rank: 201", "CGPA: 7.87/10.00"]
+  degree: string; // e.g., "Educational Background"
+  description?: string; // Optional description that appears non-bulleted
+  points: string[]; // e.g., ["B.Tech, IIT Delhi (1988) — All India JEE Rank: 201", etc.]
 }
 
 export interface ProfessionalProfileSection {
-  heading: string; // e.g., "Experience", "Specialization"
+  heading?: string; // e.g., "Experience/Specialization" - now optional
+  description?: string; // Optional description that appears non-bulleted
   points: string[];
 }
 

@@ -7,50 +7,33 @@ const teacherProfile: TeacherProfile = {
   name: 'Vishva Mohan',
   title: 'Coach, Mentor, Guide.',
   photoUrl: '/vishva_photo.jpg',
-  bio: 'An Ex-DM and Spl. Commissioner, Govt. of Delhi, Shri Vishva Mohan has a deep passion for teaching and mentoring. His profile is summarized below:',
+  bio: 'With over two decades of experience in teaching Physics and Science, I have dedicated my career to helping students discover the joy of learning and the power of analytical thinking. As a coach and mentor, I have had the privilege of guiding hundreds of students to achieve excellence in some of the most competitive academic arenas. Many of my students have secured admissions to India\'s top institutions such as the IITs, NITs, and leading government and private medical colleges, as well as reputed schools and universities abroad in the United States, Germany, and Australia.\n\nMy journey into full-time education began after taking early retirement from the civil service, as District Magistrate and Special Commissioner — widely regarded as one of the most prestigious careers in India. This decision was driven by a deep passion for learning and an even greater desire to share that learning with young, curious minds. I believe that true education goes beyond textbooks; it involves nurturing integrity, curiosity, and perseverance.\n\nEthics form the foundation of my approach to both teaching and life. I believe that knowledge, when combined with honesty and purpose, has the power to transform individuals and societies. Over the years, I have seen my students grow not only as scholars but also as responsible, value-driven individuals who contribute meaningfully to their fields. Many of them are now thriving in multinational companies, entrepreneurial ventures, and public service across India and world.\n\nAs an educator, my mission continues to be - inspiring students to think critically, question deeply, and learn passionately. I take great pride in being part of their journey toward excellence and in watching them shape a better, more thoughtful world.',
   academicProfiles: [
     {
-      degree: 'B.Tech, IIT Delhi (1988)',
+      degree: 'Academic Credentials',
       points: [
-        'All India JEE Rank: 201',
-        'CGPA: 7.87/10.00',
-      ],
-    },
-    {
-      degree: 'MBA, University of Notre Dame, USA (2005)',
-      points: [
-        'GMAT: 760/800',
-        'TOEFL: 283/300',
-        'GPA: 3.91/4.00',
-      ],
-    },
-    {
-      degree: 'UPSC IAS (Combined Civil Services) Exam (1991)',
-      points: [
-        'All India Rank: 479',
-        'Optional Subjects: Physics and Mechanical Engineering',
+        'B.Tech, IIT Delhi (1988) — All India JEE Rank: 201 | CGPA: 7.87/10.00',
+        'MBA, University of Notre Dame, USA (2005) — GMAT: 760/800 | TOEFL: 283/300 | GPA: 3.91/4.00',
+        'UPSC Civil Services Exam (1991) — All India Rank: 479 | Optionals: Physics & Mechanical Engineering',
       ],
     },
   ],
   professionalSections: [
     {
-      heading: 'Experience',
-      points: ['Over two decades of teaching and mentoring'],
-    },
-    {
-      heading: 'Specialization',
+      heading: 'Career',
+      description: '<b>As a coach</b>',
       points: [
-        'JEE (Advanced) and JEE (Main)/NEET level Physics',
-        'CBSE Physics',
-        'SAT: English, Reasoning/Analytical, Math',
-        'Statement of Purpose (SoP) for admission to North American universities',
+        'Teaching and mentoring for excellence, success in competitive exams',
+        'Specialization: JEE (Advanced/Main), NEET Physics, Science and Math for class 8 onward, SAT, SoP advice for college admissions',
       ],
     },
     {
-      heading: 'Proven Track Record',
+      description: '<b>As an administrator</b> (mostly in Delhi Government and Andaman and Nicobar administration)',
       points: [
-        'Many students successfully admitted to IITs, DTU, and other top institutions',
-        'All those who completed UG studies have subsequently been admitted to top US universities/IIMs or are excelling in MNCs/entrepreneurship',
+        'Core governance: Sub Divisional Magistrate, Additional District Magistrate, District Magistrate, Jail Superintendent, Additional Chief Electoral Officer',
+        'Departmental functions: Joint Commissioner (Transport), Deputy Secretary (Power), Additional Commissioner (Industries), Additional Registrar (Cooperative Societies), Joint Secretary (Agriculture)',
+        'Public Sector/Developmental: General Manager - ANIIDCO, General Manager – DSIIDC, Commissioner – DDA, OSD – Delhi Transport Corporation, Competent Authority – National Monuments Authority',
+        'Cultural/Social/Educational: Additional Secretary (Art and Culture), Additional Chief Executive (Mission Convergence), Secretary (SPCA), Secretary (Sahitya Kala Parishad), Centre Coordinator – IGNOU and NOS, Chairman – Kendriya Vidyalaya, Vigyan Vihar; Chairman – Joint Assessment Committee, IP University',
       ],
     },
   ],

@@ -19,6 +19,18 @@ const SubBulletPoint = ({ children }: { children: React.ReactNode }) => (
   </li>
 );
 
+// Helper function to render text with HTML bold tags
+const renderTextWithBold = (text: string) => {
+  const parts = text.split(/(<b>.*?<\/b>)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('<b>') && part.endsWith('</b>')) {
+      const boldText = part.slice(3, -4); // Remove <b> and </b>
+      return <strong key={index}>{boldText}</strong>;
+    }
+    return part;
+  });
+};
+
 
 export default async function HomePage() {
   const profile: TeacherProfile = await getTeacherProfile();
@@ -26,35 +38,43 @@ export default async function HomePage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <Card className="overflow-hidden shadow-xl">
-        <div className="md:flex">
-          <div className="md:shrink-0 md:w-2/5">
-            <Image
-              src={profile.photoUrl}
-              alt={profile.name}
-              width={482} 
-              height={587} 
-              className="h-full w-full object-contain" // Changed from object-cover to object-contain
-              data-ai-hint="teacher portrait"
-              priority
-            />
-          </div>
-          <div className="p-6 md:p-8 flex-1">
-            <CardHeader className="p-0 mb-4">
-              <h1 className="font-headline text-4xl md:text-5xl font-bold text-primary">{profile.name}</h1>
-              <p className="text-xl text-accent font-semibold mt-1">{profile.title}</p>
-            </CardHeader>
-            <CardContent className="p-0 space-y-6">
+        <div className="p-6 md:p-8">
+          <CardHeader className="p-0 mb-6">
+            <h1 className="font-headline text-4xl md:text-5xl font-bold text-primary">{profile.name}</h1>
+            <p className="text-xl text-accent font-semibold mt-1">{profile.title}</p>
+          </CardHeader>
+          <CardContent className="p-0 space-y-6">
+            <div className="relative">
+              <Image
+                src={profile.photoUrl}
+                alt={profile.name}
+                width={300} 
+                height={365} 
+                className="float-left mr-6 mb-4 rounded-lg shadow-md max-w-[250px] md:max-w-[300px] h-auto"
+                data-ai-hint="teacher portrait"
+                priority
+              />
               <div>
-                <h2 className="font-headline text-2xl font-semibold text-foreground mb-2">About Me</h2>
-                <p className="text-muted-foreground leading-relaxed">{profile.bio}</p>
+                <h2 className="font-headline text-2xl font-semibold text-foreground mb-4">About Me</h2>
+                <div className="text-muted-foreground leading-relaxed space-y-4 text-justify">
+                  {profile.bio.split('\n\n').map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
+                  ))}
+                </div>
               </div>
+              <div className="clear-left"></div>
+            </div>
 
               {profile.academicProfiles.map((academic, index) => (
                 <div key={`academic-${index}`}>
-                  <h3 className="font-headline text-lg font-semibold text-foreground mb-1 flex items-center">
-                    <Dot className="h-6 w-6 text-primary mr-1 shrink-0" />
+                  <h3 className="font-headline text-lg font-semibold text-foreground mb-1">
                     {academic.degree}
                   </h3>
+                  {academic.description && (
+                    <p className="text-muted-foreground ml-6 font-medium mb-2">
+                      {academic.description}
+                    </p>
+                  )}
                   <ul className="space-y-1">
                     {academic.points.map((point, pIndex) => (
                       <SubBulletPoint key={`academic-${index}-point-${pIndex}`}>{point}</SubBulletPoint>
@@ -65,10 +85,18 @@ export default async function HomePage() {
               
               {profile.professionalSections.map((section, index) => (
                 <div key={`professional-${index}`}>
-                  <h3 className="font-headline text-lg font-semibold text-foreground mb-1 flex items-center">
-                    <Dot className="h-6 w-6 text-primary mr-1 shrink-0" />
-                    {section.heading}
-                  </h3>
+                  {section.heading ? (
+                    <h3 className="font-headline text-lg font-semibold text-foreground mb-3">
+                      {section.heading}
+                    </h3>
+                  ) : (
+                    <div className="h-4"></div>
+                  )}
+                  {section.description && (
+                    <p className="text-muted-foreground ml-6 text-base font-medium mb-4">
+                      {renderTextWithBold(section.description)}
+                    </p>
+                  )}
                   <ul className="space-y-1">
                     {section.points.map((point, pIndex) => (
                       <SubBulletPoint key={`professional-${index}-point-${pIndex}`}>{point}</SubBulletPoint>
@@ -77,16 +105,21 @@ export default async function HomePage() {
                 </div>
               ))}
               
-              <div className="pt-4">
+              <div className="pt-4 flex flex-col sm:flex-row gap-4">
                 <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                   <Link href="/resources">
                     Resources
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
+                <Button asChild size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                  <Link href="/contact">
+                    Get in Touch
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
               </div>
             </CardContent>
-          </div>
         </div>
       </Card>
     </div>
