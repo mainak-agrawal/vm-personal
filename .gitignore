@@ -10,8 +10,6 @@
 !.yarn/releases
 !.yarn/versions
 
-/src/ai/*
-
 # testing
 /coverage
 
@@ -54,3 +52,13 @@ firestore-debug.log
 # static artifacts
 /src/lib/static-data.json
 /src/lib/static-params.json
+
+# MCP Server (Python)
+/mcp-server/venv/
+/mcp-server/env/
+/mcp-server/__pycache__/
+/mcp-server/*.pyc
+/mcp-server/*.pyo
+/mcp-server/*.pyd
+/mcp-server/.env
+/mcp-server/*.log

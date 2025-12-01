@@ -1,0 +1,12 @@
+{
+	"servers": {
+		"vm-personal-website-manager": {
+			"type": "stdio",
+			"command": "C:/Users/maiagrawal/personal-projects/vm-personal/mcp-server/venv/Scripts/python.exe",
+			"args": [
+                "C:/Users/maiagrawal/personal-projects/vm-personal/mcp-server/server.py"
+            ],
+		}
+	},
+	"inputs": []
+}
