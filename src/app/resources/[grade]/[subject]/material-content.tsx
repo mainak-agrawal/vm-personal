@@ -9,7 +9,7 @@ import { VideoCard } from '@/components/cards/video-card';
 import { DocumentRow } from '@/components/lists/document-row';
 import { HtmlResourceTab } from '@/components/lists/html-resource-tab';
 import { VideoPlayerModal } from '@/components/modals/video-player-modal';
-import { Film, FileText, LayoutGrid, List, Search, MonitorPlay, ClipboardList } from 'lucide-react';
+import { Film, FileText, LayoutGrid, List, Search, Sparkles, ListChecks } from 'lucide-react';
 
 interface MaterialContentClientProps {
   content: MaterialContent;
@@ -110,7 +110,7 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
                 : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300'
             }`}
           >
-            <MonitorPlay className="h-5 w-5" />
+            <Sparkles className="h-5 w-5" />
             Interactive Lessons
           </button>
           <button
@@ -121,7 +121,7 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
                 : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300'
             }`}
           >
-            <ClipboardList className="h-5 w-5" />
+            <ListChecks className="h-5 w-5" />
             Quizzes
           </button>
           <button
@@ -205,7 +205,7 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
           <HtmlResourceTab
             heading="Interactive Lessons"
             resources={interactiveLessons}
-            icon={MonitorPlay}
+            icon={Sparkles}
             searchPlaceholder="Search interactive lessons..."
             emptyMessage="No interactive lessons available for this section yet."
             itemNoun="interactive lessons"
@@ -216,7 +216,7 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
           <HtmlResourceTab
             heading="Quizzes"
             resources={quizzes}
-            icon={ClipboardList}
+            icon={ListChecks}
             searchPlaceholder="Search quizzes..."
             emptyMessage="No quizzes available for this section yet."
             itemNoun="quizzes"
