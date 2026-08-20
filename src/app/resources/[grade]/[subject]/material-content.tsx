@@ -7,14 +7,15 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { VideoCard } from '@/components/cards/video-card';
 import { DocumentRow } from '@/components/lists/document-row';
+import { HtmlResourceTab } from '@/components/lists/html-resource-tab';
 import { VideoPlayerModal } from '@/components/modals/video-player-modal';
-import { Film, FileText, LayoutGrid, List, Search } from 'lucide-react';
+import { Film, FileText, LayoutGrid, List, Search, MonitorPlay, ClipboardList } from 'lucide-react';
 
 interface MaterialContentClientProps {
   content: MaterialContent;
 }
 
-type ActiveTab = 'videos' | 'docs';
+type ActiveTab = 'videos' | 'interactive' | 'quizzes' | 'docs';
 type SortOption = 'name-asc' | 'name-desc' | 'date-desc' | 'date-asc';
 
 export function MaterialContentClient({ content }: MaterialContentClientProps) {
@@ -82,6 +83,9 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
     setSelectedVideo(null);
   };
 
+  const interactiveLessons = content.interactiveLessons ?? [];
+  const quizzes = content.quizzes ?? [];
+
   return (
     <div className="w-full">
       {/* Horizontal Tabs */}
@@ -97,6 +101,28 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
           >
             <Film className="h-5 w-5" />
             Videos
+          </button>
+          <button
+            onClick={() => setActiveTab('interactive')}
+            className={`flex items-center gap-2 py-3 px-1 border-b-2 transition-colors ${
+              activeTab === 'interactive'
+                ? 'border-primary text-primary font-medium'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300'
+            }`}
+          >
+            <MonitorPlay className="h-5 w-5" />
+            Interactive Lessons
+          </button>
+          <button
+            onClick={() => setActiveTab('quizzes')}
+            className={`flex items-center gap-2 py-3 px-1 border-b-2 transition-colors ${
+              activeTab === 'quizzes'
+                ? 'border-primary text-primary font-medium'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300'
+            }`}
+          >
+            <ClipboardList className="h-5 w-5" />
+            Quizzes
           </button>
           <button
             onClick={() => setActiveTab('docs')}
@@ -173,6 +199,29 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
               </div>
             )}
           </div>
+        )}
+
+        {activeTab === 'interactive' && (
+          <HtmlResourceTab
+            heading="Interactive Lessons"
+            resources={interactiveLessons}
+            icon={MonitorPlay}
+            searchPlaceholder="Search interactive lessons..."
+            emptyMessage="No interactive lessons available for this section yet."
+            itemNoun="interactive lessons"
+          />
+        )}
+
+        {activeTab === 'quizzes' && (
+          <HtmlResourceTab
+            heading="Quizzes"
+            resources={quizzes}
+            icon={ClipboardList}
+            searchPlaceholder="Search quizzes..."
+            emptyMessage="No quizzes available for this section yet."
+            itemNoun="quizzes"
+            showPreview
+          />
         )}
 
         {activeTab === 'docs' && (

@@ -1,5 +1,5 @@
 import type { TeacherProfile, ResourceCategory, TopicCategory, MaterialContent, VideoResource, DocumentIconName, DocumentType } from '@/types';
-import { fetchDocumentsFromR2, getYoutubeVideosFromR2File } from "./utils";
+import { fetchDocumentsFromR2, getYoutubeVideosFromR2File, getObjectTitleFromR2 } from "./utils";
 
 const R2_CUSTOM_DOMAIN = "https://vm-personal-website.r2.vishvamohan.com";
 
@@ -163,14 +163,21 @@ export async function populateStaticData(): Promise<{
 
     console.log(`[BUILD] Found ${resources.length} resources in R2 bucket.`);
     
+    // Set of all object keys, used to resolve quiz preview images without extra requests.
+    const allKeys = new Set(resources.map((r) => r.key));
+
     for (const resource of resources) {
       const parts = resource.key.split('/');
-      if (parts.length !== 3) {
+      // Root files use `gradesub/topic/filename` (3 parts).
+      // Interactive lessons and quizzes live in subdirectories:
+      // `gradesub/topic/sims/file.html` and `gradesub/topic/quiz/file.html` (4 parts).
+      if (parts.length < 3 || parts.length > 4) {
         console.warn(`[BUILD] Skipping resource with unexpected key format: ${resource.key}`);
         continue;
       }
 
-      const [gradesub, topicName, filename] = parts;
+      const gradesub = parts[0];
+      const topicName = parts[1];
       const [, grade, subject] = gradesub.split('-');
       
       // Check if this category already exists in resourceCategories
@@ -213,11 +220,69 @@ export async function populateStaticData(): Promise<{
           topic: topicName,
           gradeSubject: gradesub,
           videos: [],
+          interactiveLessons: [],
+          quizzes: [],
           documents: [],
         });
       }
 
       const materialContent = materialPerCategory.get(contentKey)!;
+
+      // Handle subdirectory files: interactive lessons (/sims) and quizzes (/quiz).
+      if (parts.length === 4) {
+        const subdir = parts[2];
+        const filename = parts[3];
+        const fileExtension = filename.split('.').pop()?.toLowerCase() || '';
+
+        // Only HTML files are served/listed. Image files (jpg/png) in /quiz exist
+        // solely for social-media preview (og) tags, so they are ignored here.
+        if (fileExtension !== 'html' && fileExtension !== 'htm') {
+          continue;
+        }
+
+        if (subdir !== 'sims' && subdir !== 'quiz') {
+          console.warn(`[BUILD] Skipping unknown subdirectory in key: ${resource.key}`);
+          continue;
+        }
+
+        // The display name comes from the object's "title" metadata; fall back to filename.
+        let title = '';
+        try {
+          title = await getObjectTitleFromR2(resource.key);
+        } catch (error) {
+          console.error(`[BUILD] Failed to read title metadata for ${resource.key}:`, error);
+        }
+        if (!title) {
+          title = filename.replace(/\.html?$/i, '').replace(/_/g, ' ');
+        }
+
+        const htmlResource = {
+          id: resource.key,
+          title,
+          url: convertToCustomDomainUrl(resource.url),
+          uploadDate: resource.uploaded.toISOString(),
+        };
+
+        if (subdir === 'sims') {
+          materialContent.interactiveLessons.push(htmlResource);
+        } else {
+          // Quizzes may have a social-preview image sharing the html's path/name
+          // with a .jpg (preferred) or .png extension. It's optional.
+          const baseKey = resource.key.replace(/\.html?$/i, '');
+          const previewKey = [`${baseKey}.jpg`, `${baseKey}.png`].find((k) => allKeys.has(k));
+          const previewImageUrl = previewKey ? `${R2_CUSTOM_DOMAIN}/${previewKey}` : undefined;
+          materialContent.quizzes.push({ ...htmlResource, previewImageUrl });
+        }
+
+        continue;
+      }
+
+      const filename = parts[2];
+
+      // Skip R2 "folder" placeholder objects (0-byte keys ending in '/').
+      if (filename === "") {
+        continue;
+      }
 
       if (filename === "videos.txt") {
         // Populate the videos array based on the YouTube URLs in the file

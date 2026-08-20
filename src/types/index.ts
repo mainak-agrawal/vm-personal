@@ -60,11 +60,22 @@ export interface DocumentResource {
   fileSize?: string; // e.g., "2.5 MB" from Drive's size
 }
 
+// HTML resources served directly from R2 (interactive lessons in /sims, quizzes in /quiz)
+export interface HtmlResource {
+  id: string; // R2 object key
+  title: string; // From the R2 object's "title" metadata (falls back to filename)
+  url: string; // Public URL that serves the HTML page directly
+  uploadDate: string; // ISO date string from R2's modifiedTime
+  previewImageUrl?: string; // Social-preview image (same name as the html, .jpg/.png); quizzes only
+}
+
 export interface MaterialContent {
   title: string; // e.g. "Kinematics - Class X Physics"
   description: string; // e.g. "Videos and documents for Kinematics in Class X Physics"
   topic: string; // e.g. "kinematics"
   gradeSubject: string; // e.g. "class-10-physics"
   videos: VideoResource[];
+  interactiveLessons: HtmlResource[]; // From the /sims subdirectory
+  quizzes: HtmlResource[]; // From the /quiz subdirectory
   documents: DocumentResource[];
 }

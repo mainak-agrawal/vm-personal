@@ -187,6 +187,77 @@ export async function getFileFromR2(filePath: string, env?: any): Promise<string
   return getFileContentUsingS3Api(filePath);
 }
 
+// Get an object's custom metadata (x-amz-meta-*) using a HEAD request via aws4fetch
+export async function getObjectMetadataUsingS3Api(filePath: string): Promise<Record<string, string>> {
+  const client = new AwsClient({
+    service: "s3",
+    region: "auto",
+    accessKeyId: process.env.R2_ACCESS_KEY!,
+    secretAccessKey: process.env.R2_SECRET_KEY!,
+  });
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const response = await client.fetch(
+        `${R2_ENDPOINT}/${R2_BUCKET_NAME}/${filePath}`,
+        { method: "HEAD" }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const metadata: Record<string, string> = {};
+      const prefix = "x-amz-meta-";
+      response.headers.forEach((value, key) => {
+        if (key.toLowerCase().startsWith(prefix)) {
+          metadata[key.toLowerCase().slice(prefix.length)] = value;
+        }
+      });
+      return metadata;
+    } catch (err) {
+      console.warn(`R2 head object attempt ${attempt} failed for ${filePath}:`, err);
+      if (attempt < MAX_RETRIES) {
+        await new Promise((res) => setTimeout(res, RETRY_DELAY_MS));
+      } else {
+        throw new Error(`Failed to head object ${filePath} after retries.`);
+      }
+    }
+  }
+
+  return {};
+}
+
+// Get an object's custom metadata using Cloudflare R2 bindings
+export async function getObjectMetadataUsingR2Binding(filePath: string, env: any): Promise<Record<string, string>> {
+  try {
+    const r2Bucket = env.VM_PERSONAL_R2;
+    const object = await r2Bucket.head(filePath);
+
+    if (!object) {
+      throw new Error(`File not found: ${filePath}`);
+    }
+
+    return (object.customMetadata as Record<string, string>) || {};
+  } catch (err) {
+    console.error(`Failed to head object ${filePath} using binding:`, err);
+    throw new Error(`Failed to head object ${filePath} using binding.`);
+  }
+}
+
+// Smart function that returns the "title" metadata for an R2 object (empty string if missing)
+export async function getObjectTitleFromR2(filePath: string, env?: any): Promise<string> {
+  try {
+    const metadata = (env && env.VM_PERSONAL_R2)
+      ? await getObjectMetadataUsingR2Binding(filePath, env)
+      : await getObjectMetadataUsingS3Api(filePath);
+    return metadata["title"]?.trim() || "";
+  } catch (err) {
+    console.error(`Failed to get title metadata for ${filePath}:`, err);
+    return "";
+  }
+}
+
 /**
  * Creates a YouTube oEmbed API URL for fetching video metadata in JSON format
  * @param youtubeUrl The YouTube video URL
