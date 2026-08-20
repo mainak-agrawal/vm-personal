@@ -92,11 +92,11 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
       <div className="border-b border-border mb-8 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <nav className="flex gap-4 sm:gap-8 min-w-max">
           {([
-            { id: 'videos', label: 'Videos', icon: Film },
-            { id: 'interactive', label: 'Interactive Lessons', icon: Sparkles },
-            { id: 'quizzes', label: 'Quizzes', icon: ListChecks },
-            { id: 'docs', label: 'Documents', icon: FileText },
-          ] as const).map(({ id, label, icon: Icon }) => (
+            { id: 'videos', label: 'Videos', icon: Film, count: content.videos.length },
+            { id: 'interactive', label: 'Interactive Lessons', icon: Sparkles, count: interactiveLessons.length },
+            { id: 'quizzes', label: 'Quizzes', icon: ListChecks, count: quizzes.length },
+            { id: 'docs', label: 'Documents', icon: FileText, count: content.documents.length },
+          ] as const).map(({ id, label, icon: Icon, count }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
@@ -108,6 +108,17 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
             >
               <Icon className="h-5 w-5 shrink-0" />
               {label}
+              {count > 0 && (
+                <span
+                  className={`ml-1 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-xs font-semibold ${
+                    activeTab === id
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-secondary text-muted-foreground'
+                  }`}
+                >
+                  {count}
+                </span>
+              )}
             </button>
           ))}
         </nav>
