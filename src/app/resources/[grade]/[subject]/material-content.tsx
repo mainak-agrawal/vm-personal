@@ -88,53 +88,28 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
 
   return (
     <div className="w-full">
-      {/* Horizontal Tabs */}
-      <div className="border-b border-border mb-8">
-        <nav className="flex space-x-8">
-          <button
-            onClick={() => setActiveTab('videos')}
-            className={`flex items-center gap-2 py-3 px-1 border-b-2 transition-colors ${
-              activeTab === 'videos'
-                ? 'border-primary text-primary font-medium'
-                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300'
-            }`}
-          >
-            <Film className="h-5 w-5" />
-            Videos
-          </button>
-          <button
-            onClick={() => setActiveTab('interactive')}
-            className={`flex items-center gap-2 py-3 px-1 border-b-2 transition-colors ${
-              activeTab === 'interactive'
-                ? 'border-primary text-primary font-medium'
-                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300'
-            }`}
-          >
-            <Sparkles className="h-5 w-5" />
-            Interactive Lessons
-          </button>
-          <button
-            onClick={() => setActiveTab('quizzes')}
-            className={`flex items-center gap-2 py-3 px-1 border-b-2 transition-colors ${
-              activeTab === 'quizzes'
-                ? 'border-primary text-primary font-medium'
-                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300'
-            }`}
-          >
-            <ListChecks className="h-5 w-5" />
-            Quizzes
-          </button>
-          <button
-            onClick={() => setActiveTab('docs')}
-            className={`flex items-center gap-2 py-3 px-1 border-b-2 transition-colors ${
-              activeTab === 'docs'
-                ? 'border-primary text-primary font-medium'
-                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300'
-            }`}
-          >
-            <FileText className="h-5 w-5" />
-            Documents
-          </button>
+      {/* Horizontal Tabs (scrollable on narrow screens) */}
+      <div className="border-b border-border mb-8 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <nav className="flex gap-4 sm:gap-8 min-w-max">
+          {([
+            { id: 'videos', label: 'Videos', icon: Film },
+            { id: 'interactive', label: 'Interactive Lessons', icon: Sparkles },
+            { id: 'quizzes', label: 'Quizzes', icon: ListChecks },
+            { id: 'docs', label: 'Documents', icon: FileText },
+          ] as const).map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={`flex items-center gap-2 py-3 px-1 border-b-2 whitespace-nowrap transition-colors ${
+                activeTab === id
+                  ? 'border-primary text-primary font-medium'
+                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300'
+              }`}
+            >
+              <Icon className="h-5 w-5 shrink-0" />
+              {label}
+            </button>
+          ))}
         </nav>
       </div>
 
