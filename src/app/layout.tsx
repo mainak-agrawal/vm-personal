@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Navbar } from '@/components/layout/navbar';
 import { Toaster } from "@/components/ui/toaster";
+import { AnalyticsProvider } from '@/components/analytics/analytics-provider';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://vishvamohan.com'),
@@ -69,11 +70,13 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Toaster />
+        <AnalyticsProvider>
+          <Navbar />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <Toaster />
+        </AnalyticsProvider>
       </body>
     </html>
   );

@@ -1,7 +1,10 @@
+'use client';
+
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import type { ResourceCategory } from '@/types';
 import { ArrowRight } from 'lucide-react';
+import { track, ANALYTICS_EVENTS } from '@/lib/analytics';
 
 interface ResourceCategoryCardProps {
   category: ResourceCategory;
@@ -9,7 +12,16 @@ interface ResourceCategoryCardProps {
 
 export function ResourceCategoryCard({ category }: ResourceCategoryCardProps) {
   return (
-    <Link href={`/resources/${category.slug}`} className="block h-full">
+    <Link
+      href={`/resources/${category.slug}`}
+      className="block h-full"
+      onClick={() =>
+        track(ANALYTICS_EVENTS.RESOURCE_CATEGORY_CLICK, {
+          category_title: category.title,
+          category_slug: category.slug,
+        })
+      }
+    >
       <Card className="flex flex-col h-full hover:shadow-lg hover:bg-primary/5 active:shadow-sm active:scale-[0.98] active:translate-y-0.5 transition-all duration-200 cursor-pointer group">
         <CardHeader className="flex-1">
           <CardTitle className="font-headline text-2xl text-primary group-hover:text-primary/80 transition-colors">

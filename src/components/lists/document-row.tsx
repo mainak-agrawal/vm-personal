@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import type { DocumentResource, DocumentIconName } from '@/types';
 import { 
@@ -14,9 +16,11 @@ import {
   type LucideIcon 
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { track, ANALYTICS_EVENTS, type ResourceContext } from '@/lib/analytics';
 
 interface DocumentRowProps {
   document: DocumentResource;
+  trackingContext?: ResourceContext;
 }
 
 const iconMap: Record<DocumentIconName, LucideIcon> = {
@@ -30,8 +34,16 @@ const iconMap: Record<DocumentIconName, LucideIcon> = {
   FileType: FileType,
 };
 
-export function DocumentRow({ document }: DocumentRowProps) {
+export function DocumentRow({ document, trackingContext }: DocumentRowProps) {
   const IconComponent = iconMap[document.icon] || File; // Fallback to File icon if not found
+  const handleDownload = () => {
+    track(ANALYTICS_EVENTS.DOCUMENT_DOWNLOAD, {
+      resource_id: document.id,
+      resource_title: document.title,
+      document_type: document.type,
+      ...trackingContext,
+    });
+  };
   return (
     <div className="flex items-center justify-between p-4 border-b hover:bg-secondary/50 transition-colors duration-200 rounded-md">
       <div className="flex items-center gap-4">
@@ -46,7 +58,7 @@ export function DocumentRow({ document }: DocumentRowProps) {
         </div>
       </div>
       <Button asChild variant="ghost" size="icon" className="text-accent hover:bg-accent/10 hover:text-accent">
-        <a href={document.downloadUrl} download={document.title} aria-label={`Download ${document.title}`}>
+        <a href={document.downloadUrl} download={document.title} aria-label={`Download ${document.title}`} onClick={handleDownload}>
           <Download className="h-5 w-5" />
         </a>
       </Button>

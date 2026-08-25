@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CalendarDays, ExternalLink, Search, type LucideIcon } from 'lucide-react';
 import { format } from 'date-fns';
+import { track, ANALYTICS_EVENTS, type ResourceContext } from '@/lib/analytics';
 
 type SortOption = 'name-asc' | 'name-desc' | 'date-desc' | 'date-asc';
 
@@ -18,6 +19,8 @@ interface HtmlResourceTabProps {
   emptyMessage: string;
   itemNoun: string; // e.g. "interactive lessons", "quizzes"
   showPreview?: boolean; // Render social-preview thumbnails (quizzes)
+  resourceType?: 'quiz' | 'interactive_lesson'; // Telemetry classification
+  trackingContext?: ResourceContext;
 }
 
 export function HtmlResourceTab({
@@ -28,9 +31,24 @@ export function HtmlResourceTab({
   emptyMessage,
   itemNoun,
   showPreview = false,
+  resourceType,
+  trackingContext,
 }: HtmlResourceTabProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState<SortOption>('name-asc');
+
+  const handleOpen = (item: HtmlResource) => {
+    if (!resourceType) return;
+    const event =
+      resourceType === 'quiz'
+        ? ANALYTICS_EVENTS.QUIZ_OPEN
+        : ANALYTICS_EVENTS.INTERACTIVE_LESSON_OPEN;
+    track(event, {
+      resource_id: item.id,
+      resource_title: item.title,
+      ...trackingContext,
+    });
+  };
 
   const filteredAndSorted = useMemo(() => {
     const filtered = resources.filter((item) =>
@@ -98,6 +116,7 @@ export function HtmlResourceTab({
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Open ${item.title}`}
+                  onClick={() => handleOpen(item)}
                   className="group relative flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-lg border bg-card hover:bg-secondary/50 hover:border-primary/40 hover:shadow-sm transition-all duration-200"
                 >
                   <div className="w-full sm:w-64 md:w-72 lg:w-80 shrink-0 aspect-[1200/630] rounded-md overflow-hidden">
@@ -132,6 +151,7 @@ export function HtmlResourceTab({
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Open ${item.title}`}
+                  onClick={() => handleOpen(item)}
                   className="group flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-secondary/50 hover:border-primary/40 hover:shadow-sm transition-all duration-200"
                 >
                   <Icon className="h-8 w-8 text-primary shrink-0" />

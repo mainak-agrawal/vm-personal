@@ -10,6 +10,7 @@ import { DocumentRow } from '@/components/lists/document-row';
 import { HtmlResourceTab } from '@/components/lists/html-resource-tab';
 import { VideoPlayerModal } from '@/components/modals/video-player-modal';
 import { Film, FileText, LayoutGrid, List, Search, Sparkles, ListChecks } from 'lucide-react';
+import { track, ANALYTICS_EVENTS, type ResourceContext } from '@/lib/analytics';
 
 interface MaterialContentClientProps {
   content: MaterialContent;
@@ -28,6 +29,17 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
   const [videoSortOption, setVideoSortOption] = useState<SortOption>('name-asc');
   const [docSearchTerm, setDocSearchTerm] = useState('');
   const [docSortOption, setDocSortOption] = useState<SortOption>('date-desc');
+
+  const trackingContext: ResourceContext = {
+    grade_subject: content.gradeSubject,
+    topic: content.topic,
+    material_title: content.title,
+  };
+
+  const handleTabChange = (id: ActiveTab) => {
+    setActiveTab(id);
+    track(ANALYTICS_EVENTS.RESOURCE_TAB_VIEW, { tab: id, ...trackingContext });
+  };
 
   // Filter and sort videos based on search term and sort option
   const filteredAndSortedVideos = useMemo(() => {
@@ -77,6 +89,11 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
 
   const handlePlayVideo = (video: VideoResource) => {
     setSelectedVideo(video);
+    track(ANALYTICS_EVENTS.VIDEO_PLAY, {
+      resource_id: video.id,
+      resource_title: video.title,
+      ...trackingContext,
+    });
   };
 
   const handleCloseModal = () => {
@@ -99,7 +116,7 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
           ] as const).map(({ id, label, icon: Icon, count }) => (
             <button
               key={id}
-              onClick={() => setActiveTab(id)}
+              onClick={() => handleTabChange(id)}
               className={`flex items-center gap-2 py-3 px-1 border-b-2 whitespace-nowrap transition-colors ${
                 activeTab === id
                   ? 'border-primary text-primary font-medium'
@@ -195,6 +212,8 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
             searchPlaceholder="Search interactive lessons..."
             emptyMessage="No interactive lessons available for this section yet."
             itemNoun="interactive lessons"
+            resourceType="interactive_lesson"
+            trackingContext={trackingContext}
           />
         </div>
 
@@ -207,6 +226,8 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
             emptyMessage="No quizzes available for this section yet."
             itemNoun="quizzes"
             showPreview
+            resourceType="quiz"
+            trackingContext={trackingContext}
           />
         </div>
 
@@ -248,7 +269,7 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
                 </div>
                 <div className="space-y-3">
                   {filteredAndSortedDocuments.map((doc) => (
-                    <DocumentRow key={doc.id} document={doc} />
+                    <DocumentRow key={doc.id} document={doc} trackingContext={trackingContext} />
                   ))}
                 </div>
               </>
