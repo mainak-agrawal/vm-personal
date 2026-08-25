@@ -1,6 +1,7 @@
 import { getMaterialContent } from '@/lib/data';
 import { MaterialContentClient } from './material-content';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import type { Metadata, ResolvingMetadata } from 'next';
 
 // Import static params for build-time generation
@@ -58,6 +59,7 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
 
   const baseUrl = 'https://vishvamohan.com';
   const pageUrl = `${baseUrl}/resources/${grade}/${topic}`;
+  const gradeDisplay = grade.replace('class-', 'Class ').replace('-', ' ');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -68,6 +70,15 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
         name: content.title,
         description: content.description,
         isPartOf: { '@type': 'WebSite', name: 'Vishva Mohan', url: baseUrl },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
+          { '@type': 'ListItem', position: 2, name: 'Resources', item: `${baseUrl}/resources` },
+          { '@type': 'ListItem', position: 3, name: gradeDisplay, item: `${baseUrl}/resources/${grade}` },
+          { '@type': 'ListItem', position: 4, name: content.title, item: pageUrl },
+        ],
       },
       ...content.videos.map((v) => ({
         '@type': 'VideoObject',
@@ -117,6 +128,17 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
+        <ol className="flex flex-wrap items-center gap-2">
+          <li><Link href="/" className="hover:text-primary">Home</Link></li>
+          <li aria-hidden="true">/</li>
+          <li><Link href="/resources" className="hover:text-primary">Resources</Link></li>
+          <li aria-hidden="true">/</li>
+          <li><Link href={`/resources/${grade}`} className="hover:text-primary">{gradeDisplay}</Link></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page" className="text-foreground">{content.title}</li>
+        </ol>
+      </nav>
       <header className="mb-8">
         <h1 className="font-headline text-4xl md:text-5xl font-bold text-primary">{content.title}</h1>
         <p className="mt-2 text-lg text-muted-foreground">

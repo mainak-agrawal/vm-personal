@@ -1,6 +1,7 @@
 import { getTopicsForGradeSubject } from '@/lib/data';
 import type { TopicCategory } from '@/types';
 import { TopicsListClient } from './topics-list';
+import Link from 'next/link';
 import type { Metadata } from 'next';
 
 // Import static params for build-time generation
@@ -48,8 +49,32 @@ export default async function TopicsPage({ params }: TopicsPageProps) {
   
   const gradeDisplay = grade.replace('class-', 'Class ').replace('-', ' ');
 
+  const baseUrl = 'https://vishvamohan.com';
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
+      { '@type': 'ListItem', position: 2, name: 'Resources', item: `${baseUrl}/resources` },
+      { '@type': 'ListItem', position: 3, name: gradeDisplay, item: `${baseUrl}/resources/${grade}` },
+    ],
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
+        <ol className="flex flex-wrap items-center gap-2">
+          <li><Link href="/" className="hover:text-primary">Home</Link></li>
+          <li aria-hidden="true">/</li>
+          <li><Link href="/resources" className="hover:text-primary">Resources</Link></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page" className="text-foreground">{gradeDisplay}</li>
+        </ol>
+      </nav>
       <header className="mb-8 text-center">
         <h1 className="font-headline text-4xl md:text-5xl font-bold text-primary">
           {gradeDisplay} Topics

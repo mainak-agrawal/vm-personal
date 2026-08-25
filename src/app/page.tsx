@@ -37,8 +37,51 @@ const renderTextWithBold = (text: string) => {
 export default async function HomePage() {
   const profile: TeacherProfile = await getTeacherProfile();
 
+  const baseUrl = 'https://vishvamohan.com';
+  const personJsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': `${baseUrl}/#website`,
+        url: baseUrl,
+        name: 'Vishva Mohan',
+        description:
+          'Physics educator and mentor coaching high school students for JEE and NEET.',
+        publisher: { '@id': `${baseUrl}/#person` },
+      },
+      {
+        '@type': 'Person',
+        '@id': `${baseUrl}/#person`,
+        name: profile.name,
+        jobTitle: 'Physics Educator, Coach & Mentor',
+        description:
+          'Physics educator with over two decades of experience mentoring students for JEE, NEET, and board exams; former civil servant (District Magistrate).',
+        image: `${baseUrl}${profile.photoUrl}`,
+        url: baseUrl,
+        knowsAbout: [
+          'Physics',
+          'JEE Physics',
+          'NEET Physics',
+          'Mathematics',
+          'Biology',
+          'Competitive exam coaching',
+        ],
+        sameAs: ['https://www.youtube.com/@VM-Science'],
+        alumniOf: [
+          { '@type': 'CollegeOrUniversity', name: 'Indian Institute of Technology Delhi' },
+          { '@type': 'CollegeOrUniversity', name: 'University of Notre Dame' },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
       <Card className="overflow-hidden shadow-xl">
         <div className="p-6 md:p-8">
           <CardHeader className="p-0 mb-6">
