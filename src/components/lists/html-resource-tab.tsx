@@ -90,17 +90,17 @@ export function HtmlResourceTab({
             {searchTerm && <span> for "{searchTerm}"</span>}
           </div>
           <div className="space-y-3">
-            {filteredAndSorted.map((item) => (
-              <a
-                key={item.id}
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Open ${item.title}`}
-                className="group flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-secondary/50 hover:border-primary/40 hover:shadow-sm transition-all duration-200"
-              >
-                {showPreview && (
-                  <div className="w-28 sm:w-40 aspect-[1200/630] shrink-0 rounded-md overflow-hidden">
+            {filteredAndSorted.map((item) =>
+              showPreview ? (
+                <a
+                  key={item.id}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Open ${item.title}`}
+                  className="group relative flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-lg border bg-card hover:bg-secondary/50 hover:border-primary/40 hover:shadow-sm transition-all duration-200"
+                >
+                  <div className="w-full sm:w-64 md:w-72 lg:w-80 shrink-0 aspect-[1200/630] rounded-md overflow-hidden">
                     {item.previewImageUrl ? (
                       <img
                         src={item.previewImageUrl}
@@ -110,24 +110,44 @@ export function HtmlResourceTab({
                       />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center rounded-md border border-dashed border-primary/30 bg-primary/5 group-hover:bg-primary/10 transition-colors">
-                        <Icon className="h-8 w-8 text-primary/70" />
+                        <Icon className="h-10 w-10 text-primary/70" />
                       </div>
                     )}
                   </div>
-                )}
-                {!showPreview && <Icon className="h-8 w-8 text-primary shrink-0" />}
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-md font-semibold text-foreground truncate group-hover:text-primary transition-colors">
-                    {item.title}
-                  </h3>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                    <CalendarDays className="h-3 w-3" />
-                    <span>Uploaded: {format(new Date(item.uploadDate), 'MMMM d, yyyy')}</span>
+                  <div className="min-w-0 flex-1 sm:pr-6">
+                    <h3 className="text-base sm:text-lg font-semibold text-foreground break-words group-hover:text-primary transition-colors">
+                      {item.title}
+                    </h3>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
+                      <CalendarDays className="h-3 w-3 shrink-0" />
+                      <span>Uploaded: {format(new Date(item.uploadDate), 'MMMM d, yyyy')}</span>
+                    </div>
                   </div>
-                </div>
-                <ExternalLink className="h-5 w-5 shrink-0 text-muted-foreground group-hover:text-accent transition-colors" />
-              </a>
-            ))}
+                  <ExternalLink className="absolute top-3 right-3 h-5 w-5 shrink-0 text-muted-foreground group-hover:text-accent transition-colors" />
+                </a>
+              ) : (
+                <a
+                  key={item.id}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Open ${item.title}`}
+                  className="group flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-secondary/50 hover:border-primary/40 hover:shadow-sm transition-all duration-200"
+                >
+                  <Icon className="h-8 w-8 text-primary shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-md font-semibold text-foreground break-words group-hover:text-primary transition-colors">
+                      {item.title}
+                    </h3>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                      <CalendarDays className="h-3 w-3 shrink-0" />
+                      <span>Uploaded: {format(new Date(item.uploadDate), 'MMMM d, yyyy')}</span>
+                    </div>
+                  </div>
+                  <ExternalLink className="h-5 w-5 shrink-0 text-muted-foreground group-hover:text-accent transition-colors" />
+                </a>
+              )
+            )}
           </div>
         </>
       ) : (
