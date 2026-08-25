@@ -5,6 +5,8 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Resources',
+  description:
+    'Browse Physics, Mathematics, and Biology study materials, lecture videos, quizzes, and interactive simulations organized by class and subject for JEE, NEET, CBSE, ICSE, and IB students.',
 };
 
 export default async function ResourcesPage() {

@@ -126,7 +126,7 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
 
       {/* Content Section */}
       <div className="w-full">
-        {activeTab === 'videos' && (
+        <div className={activeTab === 'videos' ? '' : 'hidden'}>
           <div>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <h2 className="font-headline text-3xl text-primary">Lecture Videos</h2>
@@ -185,9 +185,9 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
               </div>
             )}
           </div>
-        )}
+        </div>
 
-        {activeTab === 'interactive' && (
+        <div className={activeTab === 'interactive' ? '' : 'hidden'}>
           <HtmlResourceTab
             heading="Interactive Lessons"
             resources={interactiveLessons}
@@ -196,9 +196,9 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
             emptyMessage="No interactive lessons available for this section yet."
             itemNoun="interactive lessons"
           />
-        )}
+        </div>
 
-        {activeTab === 'quizzes' && (
+        <div className={activeTab === 'quizzes' ? '' : 'hidden'}>
           <HtmlResourceTab
             heading="Quizzes"
             resources={quizzes}
@@ -208,9 +208,9 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
             itemNoun="quizzes"
             showPreview
           />
-        )}
+        </div>
 
-        {activeTab === 'docs' && (
+        <div className={activeTab === 'docs' ? '' : 'hidden'}>
           <div>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <h2 className="font-headline text-3xl text-primary">Documents & Notes</h2>
@@ -271,7 +271,7 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
               </div>
             )}
           </div>
-        )}
+        </div>
       </div>
 
       <VideoPlayerModal video={selectedVideo} isOpen={!!selectedVideo} onClose={handleCloseModal} />

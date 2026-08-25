@@ -38,6 +38,7 @@ export async function generateMetadata(
   const gradeDisplay = grade.replace('class-', 'Class ').replace('-', ' ');
   return {
     title: `${gradeDisplay} Topics`,
+    description: `Explore ${gradeDisplay} topics with study materials, lecture videos, quizzes, and interactive simulations for JEE, NEET, and CBSE, ICSE, and IB board exam preparation.`,
   };
 }
 
