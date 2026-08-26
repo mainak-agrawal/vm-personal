@@ -97,6 +97,7 @@ export default async function HomePage() {
                 className="float-left mr-6 mb-4 rounded-lg shadow-md max-w-[250px] md:max-w-[300px] h-auto"
                 data-ai-hint="teacher portrait"
                 priority
+                fetchPriority="high"
               />
               <div>
                 <h2 className="font-headline text-2xl font-semibold text-foreground mb-4">About Me</h2>
