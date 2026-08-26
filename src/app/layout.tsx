@@ -7,13 +7,15 @@ import { AnalyticsProvider } from '@/components/analytics/analytics-provider';
 export const metadata: Metadata = {
   metadataBase: new URL('https://vishvamohan.com'),
   title: {
-    default: 'Vishva Mohan | Physics Educator for JEE & NEET',
+    default: 'Science Classes by Vishva Mohan | Physics Coach for JEE & NEET',
     template: '%s | Vishva Mohan',
   },
   description:
     'Vishva Mohan is a Physics educator and mentor who coaches high school students for JEE and NEET. Explore free study materials, lecture videos, and practice resources across Physics, Mathematics, and Biology for CBSE, ICSE, and IB boards.',
   keywords: [
     'Vishva Mohan',
+    'Science Classes',
+    'Science Classes by Vishva Mohan',
     'Physics teacher',
     'JEE Physics',
     'NEET Physics',
@@ -42,14 +44,14 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://vishvamohan.com',
     siteName: 'Vishva Mohan',
-    title: 'Vishva Mohan | Physics Educator for JEE & NEET',
+    title: 'Science Classes by Vishva Mohan | Physics Coach for JEE & NEET',
     description:
       'Physics educator and mentor coaching high school students for JEE and NEET. Free study materials, lecture videos, and practice resources like Quizzes and interactive simulations for JEE, NEET, CBSE, ICSE, and IB.',
     images: [{ url: '/vishva_photo.jpg', width: 1200, height: 630, alt: 'Vishva Mohan' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Vishva Mohan | Physics Educator for JEE & NEET',
+    title: 'Science Classes by Vishva Mohan | Physics Coach for JEE & NEET',
     description:
       'Physics educator coaching high school students for JEE/NEET. Find free study materials, lecture videos, and practice resources like Quizzes and interactive simulations for JEE, NEET, CBSE, ICSE, and IB.',
     images: ['/vishva_photo.jpg'],

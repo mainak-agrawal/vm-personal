@@ -9,9 +9,8 @@ import { ArrowRight, Dot } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Home',
   description:
-    'Vishva Mohan is a Physics educator and mentor coaching high school students for JEE and NEET. Explore free study materials, lecture videos, quizzes, and interactive simulations for JEE, NEET, CBSE, ICSE, and IB.',
+    'Vishva Mohan is a Science educator and mentor coaching high school students for JEE and NEET, especially Physics. Explore free study materials, lecture videos, quizzes, and interactive simulations for JEE, NEET, CBSE, ICSE, and IB-Board.',
 };
 
 const SubBulletPoint = ({ children }: { children: React.ReactNode }) => (
