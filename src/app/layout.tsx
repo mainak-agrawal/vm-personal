@@ -47,14 +47,14 @@ export const metadata: Metadata = {
     title: 'Science Classes by Vishva Mohan | Physics Coach for JEE & NEET',
     description:
       'Physics educator and mentor coaching high school students for JEE and NEET. Free study materials, lecture videos, and practice resources like Quizzes and interactive simulations for JEE, NEET, CBSE, ICSE, and IB.',
-    images: [{ url: '/vishva_photo.jpg', width: 1200, height: 630, alt: 'Vishva Mohan' }],
+    images: [{ url: '/vishva_photo_webp.webp', width: 1200, height: 630, alt: 'Vishva Mohan' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Science Classes by Vishva Mohan | Physics Coach for JEE & NEET',
     description:
       'Physics educator coaching high school students for JEE/NEET. Find free study materials, lecture videos, and practice resources like Quizzes and interactive simulations for JEE, NEET, CBSE, ICSE, and IB.',
-    images: ['/vishva_photo.jpg'],
+    images: ['/vishva_photo_webp.webp'],
   },
 };
 
