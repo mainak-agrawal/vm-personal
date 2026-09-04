@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Navbar } from '@/components/layout/navbar';
+import { WhatsAppButton } from '@/components/layout/whatsapp-button';
 import { Toaster } from "@/components/ui/toaster";
 import { AnalyticsProvider } from '@/components/analytics/analytics-provider';
 
@@ -77,6 +78,7 @@ export default function RootLayout({
           <main className="flex-grow">
             {children}
           </main>
+          <WhatsAppButton />
           <Toaster />
         </AnalyticsProvider>
       </body>
