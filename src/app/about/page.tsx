@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { SoftImage } from '@/components/ui/soft-image';
 import Link from 'next/link';
 import { getTeacherProfile } from '@/lib/data';
 import type { TeacherProfile } from '@/types';
@@ -75,15 +75,14 @@ export default async function AboutPage() {
               className="absolute -inset-4 -z-10 rounded-[2.75rem] bg-gradient-to-br from-primary/25 via-accent/20 to-transparent blur-2xl"
             />
             <div className="overflow-hidden rounded-[2.25rem] border border-border/70 bg-card p-2 shadow-xl shadow-primary/5">
-              <Image
+              <SoftImage
                 src={profile.photoUrl}
                 alt={profile.name}
-                width={300}
-                height={365}
-                className="h-auto w-56 rounded-[1.75rem] object-cover md:w-64"
-                data-ai-hint="teacher portrait"
-                priority
+                loading="eager"
                 fetchPriority="high"
+                wrapperClassName="w-56 md:w-64 aspect-[300/365] rounded-[1.75rem]"
+                className="rounded-[1.75rem]"
+                data-ai-hint="teacher portrait"
               />
             </div>
           </div>
@@ -120,7 +119,7 @@ export default async function AboutPage() {
         </section>
 
         {/* Credentials & Career */}
-        <section className="mt-20 grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+        <section className="mx-auto mt-20 grid max-w-3xl grid-cols-1 gap-6">
           {profile.academicProfiles.map((academic, index) => (
             <article
               key={`academic-${index}`}

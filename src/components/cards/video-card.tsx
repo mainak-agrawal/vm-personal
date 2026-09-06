@@ -1,6 +1,6 @@
-import Image from 'next/image';
 import type { VideoResource } from '@/types';
 import { PlayCircle } from 'lucide-react';
+import { SoftImage } from '@/components/ui/soft-image';
 
 interface VideoCardProps {
   video: VideoResource;
@@ -13,14 +13,11 @@ export function VideoCard({ video, onPlay }: VideoCardProps) {
       className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl border border-border/50 bg-card transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/[0.06]"
       onClick={onPlay}
     >
-      <div className="relative overflow-hidden">
-        <Image
+      <div className="relative aspect-video overflow-hidden">
+        <SoftImage
           src={video.thumbnailUrl}
           alt={video.title}
-          width={320}
-          height={180}
-          className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          data-ai-hint="lecture thumbnail"
+          className="transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-background/90 shadow-lg backdrop-blur-sm">

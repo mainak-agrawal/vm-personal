@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CalendarDays, ExternalLink, Search, type LucideIcon } from 'lucide-react';
 import { format } from 'date-fns';
+import { SoftImage } from '@/components/ui/soft-image';
 import { track, ANALYTICS_EVENTS, type ResourceContext } from '@/lib/analytics';
 
 type SortOption = 'name-asc' | 'name-desc' | 'date-desc' | 'date-asc';
@@ -121,11 +122,10 @@ export function HtmlResourceTab({
                 >
                   <div className="w-full sm:w-64 md:w-72 lg:w-80 shrink-0 aspect-[1200/630] rounded-md overflow-hidden">
                     {item.previewImageUrl ? (
-                      <img
+                      <SoftImage
                         src={item.previewImageUrl}
                         alt={`Preview of ${item.title}`}
-                        loading="lazy"
-                        className="h-full w-full object-cover border rounded-md"
+                        className="border rounded-md"
                       />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center rounded-md border border-dashed border-primary/30 bg-primary/5 group-hover:bg-primary/10 transition-colors">
