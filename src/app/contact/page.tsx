@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Contact',
-  description: 'Get in touch with Vishva Mohan for coaching and mentoring inquiries.',
+  description: 'Get in touch with Vishva Mohan Sir for coaching and mentoring inquiries.',
 };
 
 export default function ContactPage() {

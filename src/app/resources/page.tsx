@@ -23,7 +23,7 @@ export default async function ResourcesPage() {
             Resources
           </h1>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">
-            Study materials, lecture videos, quizzes, and interactive simulations — organized
+            Study materials, lecture videos, quizzes, and interactive simulations organized
             by class and subject. Pick where you want to begin.
           </p>
         </header>

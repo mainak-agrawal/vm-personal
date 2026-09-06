@@ -61,7 +61,7 @@ export default async function HomePage() {
 
       {/* Visually hidden content preserved for SEO / screen readers */}
       <div className="sr-only">
-        <h2>Science Classes by Vishva Mohan — Physics Coach for JEE &amp; NEET</h2>
+        <h2>Science Classes by Vishva Mohan Sir — Physics Coach for JEE &amp; NEET</h2>
         <p>
           Vishva Mohan is a Physics and Science educator and mentor coaching high school
           students for JEE (Advanced &amp; Main) and NEET. Explore free study materials,
@@ -73,7 +73,7 @@ export default async function HomePage() {
 
       <div className="relative z-10 mx-auto max-w-5xl text-center">
         <p className="mb-6 font-headline text-xs font-medium uppercase tracking-[0.35em] text-muted-foreground">
-          Science Classes by Vishva Mohan
+          Science Classes by <span className="whitespace-nowrap">Vishva Mohan Sir</span>
         </p>
         <h1 className="text-balance font-headline text-4xl font-semibold leading-[1.05] tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[5.25rem]">
           For{' '}

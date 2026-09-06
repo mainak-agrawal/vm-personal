@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Science Classes by Vishva Mohan | Physics Coach for JEE & NEET',
+    name: 'Science Classes by Vishva Mohan Sir | Physics Coach for JEE & NEET',
     short_name: 'Vishva Mohan',
     description:
       'Physics educator and mentor coaching high school students for JEE and NEET. Free study materials, lecture videos, quizzes, and interactive simulations for CBSE, ICSE, and IB.',
