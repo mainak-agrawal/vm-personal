@@ -123,29 +123,36 @@ export default async function MaterialPage({ params }: MaterialPageProps) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
-        <ol className="flex flex-wrap items-center gap-2">
-          <li><Link href="/" className="hover:text-primary">Home</Link></li>
-          <li aria-hidden="true">/</li>
-          <li><Link href="/resources" className="hover:text-primary">Resources</Link></li>
-          <li aria-hidden="true">/</li>
-          <li><Link href={`/resources/${grade}`} className="hover:text-primary">{gradeDisplay}</Link></li>
-          <li aria-hidden="true">/</li>
-          <li aria-current="page" className="text-foreground">{content.title}</li>
-        </ol>
-      </nav>
-      <header className="mb-8">
-        <h1 className="font-headline text-4xl md:text-5xl font-bold text-primary">{content.title}</h1>
-        <p className="mt-2 text-lg text-muted-foreground">
-          {content.description}
-        </p>
-      </header>
-      <MaterialContentClient content={content} />
+    <div className="bg-aurora min-h-[calc(100dvh-4rem)]">
+      <div className="container mx-auto max-w-6xl px-6 py-12 md:py-16">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <nav aria-label="Breadcrumb" className="mb-8 text-sm text-muted-foreground">
+          <ol className="flex flex-wrap items-center gap-2">
+            <li><Link href="/" className="transition-colors hover:text-primary">Home</Link></li>
+            <li aria-hidden="true" className="text-border">/</li>
+            <li><Link href="/resources" className="transition-colors hover:text-primary">Resources</Link></li>
+            <li aria-hidden="true" className="text-border">/</li>
+            <li><Link href={`/resources/${grade}`} className="transition-colors hover:text-primary">{gradeDisplay}</Link></li>
+            <li aria-hidden="true" className="text-border">/</li>
+            <li aria-current="page" className="text-foreground">{content.title}</li>
+          </ol>
+        </nav>
+        <header className="mb-10">
+          <p className="font-headline text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground">
+            {gradeDisplay}
+          </p>
+          <h1 className="mt-3 font-headline text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
+            {content.title}
+          </h1>
+          <p className="sr-only">
+            {content.description}
+          </p>
+        </header>
+        <MaterialContentClient content={content} />
+      </div>
     </div>
   );
 }

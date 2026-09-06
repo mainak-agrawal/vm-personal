@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Input } from '@/components/ui/input';
 import { Search, ChevronRight } from 'lucide-react';
 import type { TopicCategory } from '@/types';
 
@@ -24,18 +23,19 @@ export function TopicsListClient({ topics, grade }: TopicsListClientProps) {
   return (
     <>
       {/* Search Bar */}
-      <div className="mb-8 max-w-md mx-auto">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
+      <div className="mb-8">
+        <div className="relative max-w-xl">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
             placeholder="Search topics..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="h-13 w-full rounded-full border border-border/60 bg-card/70 py-3.5 pl-12 pr-4 text-base text-foreground shadow-sm outline-none backdrop-blur-sm transition-all placeholder:text-muted-foreground focus:border-primary/40 focus:ring-2 focus:ring-primary/15"
           />
         </div>
         {searchTerm && (
-          <p className="text-sm text-muted-foreground mt-2 text-center">
+          <p className="mt-3 pl-2 text-sm text-muted-foreground">
             Showing {filteredTopics.length} of {topics.length} topics
             {searchTerm && ` for "${searchTerm}"`}
           </p>
@@ -44,30 +44,39 @@ export function TopicsListClient({ topics, grade }: TopicsListClientProps) {
 
       {/* Topics List */}
       {filteredTopics.length > 0 ? (
-        <div className="space-y-3 max-w-4xl mx-auto">
-          {filteredTopics.map((topic) => (
-            <Link
-              key={topic.slug}
-              href={`/resources/${grade}/${topic.slug}`}
-              className="block"
-            >
-              <div className="flex items-center justify-between p-4 bg-card hover:bg-primary/5 border border-border hover:border-primary/20 rounded-lg transition-all duration-200 cursor-pointer group active:scale-[0.99] active:translate-y-0.5">
-                <h3 className="text-lg font-medium text-foreground group-hover:text-primary transition-colors">
-                  {topic.name}
-                </h3>
-                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-200" />
-              </div>
-            </Link>
-          ))}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {filteredTopics.map((topic, index) => {
+            const tile = (index % 6) + 1;
+            return (
+              <Link
+                key={topic.slug}
+                href={`/resources/${grade}/${topic.slug}`}
+                className="group block focus:outline-none"
+                style={{
+                  ['--tile' as string]: `var(--tile-${tile})`,
+                  ['--ink' as string]: `var(--tile-${tile}-ink)`,
+                }}
+              >
+                <div className="flex items-center justify-between gap-4 rounded-2xl border border-border/50 bg-[hsl(var(--tile))] p-5 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-lg group-hover:shadow-black/[0.05] group-focus-visible:ring-2 group-focus-visible:ring-[hsl(var(--ink))] group-active:translate-y-0">
+                  <h3 className="font-headline text-lg font-medium tracking-tight text-foreground">
+                    {topic.name}
+                  </h3>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-background/60 text-[hsl(var(--ink))] transition-all duration-300 group-hover:bg-[hsl(var(--ink))] group-hover:text-background">
+                    <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       ) : (
-        <div className="text-center py-8">
+        <div className="py-12 text-center">
           {searchTerm ? (
             <div>
               <p className="text-muted-foreground">No topics found for "{searchTerm}"</p>
-              <button 
+              <button
                 onClick={() => setSearchTerm('')}
-                className="mt-2 text-primary hover:underline"
+                className="mt-2 font-medium text-primary hover:underline"
               >
                 Clear search
               </button>

@@ -76,7 +76,7 @@ export function HtmlResourceTab({
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <h2 className="font-headline text-3xl text-primary">{heading}</h2>
+        <h2 className="font-headline text-2xl font-semibold tracking-tight text-foreground">{heading}</h2>
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -84,11 +84,11 @@ export function HtmlResourceTab({
               placeholder={searchPlaceholder}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-full sm:w-64"
+              className="pl-10 w-full rounded-full sm:w-64"
             />
           </div>
           <Select value={sortOption} onValueChange={(value: SortOption) => setSortOption(value)}>
-            <SelectTrigger className="w-full sm:w-48">
+            <SelectTrigger className="w-full rounded-full sm:w-48">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -117,7 +117,7 @@ export function HtmlResourceTab({
                   rel="noopener noreferrer"
                   aria-label={`Open ${item.title}`}
                   onClick={() => handleOpen(item)}
-                  className="group relative flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-lg border bg-card hover:bg-secondary/50 hover:border-primary/40 hover:shadow-sm transition-all duration-200"
+                  className="group relative flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl border border-border/50 bg-card p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg hover:shadow-black/[0.05]"
                 >
                   <div className="w-full sm:w-64 md:w-72 lg:w-80 shrink-0 aspect-[1200/630] rounded-md overflow-hidden">
                     {item.previewImageUrl ? (
@@ -152,9 +152,11 @@ export function HtmlResourceTab({
                   rel="noopener noreferrer"
                   aria-label={`Open ${item.title}`}
                   onClick={() => handleOpen(item)}
-                  className="group flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-secondary/50 hover:border-primary/40 hover:shadow-sm transition-all duration-200"
+                  className="group flex items-center gap-4 rounded-2xl border border-border/50 bg-card p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg hover:shadow-black/[0.05]"
                 >
-                  <Icon className="h-8 w-8 text-primary shrink-0" />
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                    <Icon className="h-6 w-6" />
+                  </span>
                   <div className="min-w-0 flex-1">
                     <h3 className="text-md font-semibold text-foreground break-words group-hover:text-primary transition-colors">
                       {item.title}
