@@ -105,9 +105,9 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
 
   return (
     <div className="w-full">
-      {/* Horizontal Tabs (scrollable on narrow screens) */}
-      <div className="border-b border-border mb-8 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <nav className="flex gap-4 sm:gap-8 min-w-max">
+      {/* Pill tab navigation (scrollable on narrow screens) */}
+      <div className="mb-8 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <nav className="inline-flex min-w-max gap-1 rounded-full border border-border/60 bg-card/60 p-1.5 backdrop-blur-sm">
           {([
             { id: 'videos', label: 'Videos', icon: Film, count: content.videos.length },
             { id: 'interactive', label: 'Interactive Lessons', icon: Sparkles, count: interactiveLessons.length },
@@ -117,19 +117,19 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
             <button
               key={id}
               onClick={() => handleTabChange(id)}
-              className={`flex items-center gap-2 py-3 px-1 border-b-2 whitespace-nowrap transition-colors ${
+              className={`flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
                 activeTab === id
-                  ? 'border-primary text-primary font-medium'
-                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
               }`}
             >
-              <Icon className="h-5 w-5 shrink-0" />
+              <Icon className="h-4 w-4 shrink-0" />
               {label}
               {count > 0 && (
                 <span
-                  className={`ml-1 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-xs font-semibold ${
+                  className={`ml-0.5 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-xs font-semibold ${
                     activeTab === id
-                      ? 'bg-primary text-primary-foreground'
+                      ? 'bg-primary-foreground/20 text-primary-foreground'
                       : 'bg-secondary text-muted-foreground'
                   }`}
                 >
@@ -146,7 +146,7 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
         <div className={activeTab === 'videos' ? '' : 'hidden'}>
           <div>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-              <h2 className="font-headline text-3xl text-primary">Lecture Videos</h2>
+              <h2 className="font-headline text-2xl font-semibold tracking-tight text-foreground">Lecture Videos</h2>
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -154,11 +154,11 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
                     placeholder="Search videos..."
                     value={videoSearchTerm}
                     onChange={(e) => setVideoSearchTerm(e.target.value)}
-                    className="pl-10 w-full sm:w-64"
+                    className="pl-10 w-full rounded-full sm:w-64"
                   />
                 </div>
                 <Select value={videoSortOption} onValueChange={(value: SortOption) => setVideoSortOption(value)}>
-                  <SelectTrigger className="w-full sm:w-48">
+                  <SelectTrigger className="w-full rounded-full sm:w-48">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
@@ -234,7 +234,7 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
         <div className={activeTab === 'docs' ? '' : 'hidden'}>
           <div>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-              <h2 className="font-headline text-3xl text-primary">Documents & Notes</h2>
+              <h2 className="font-headline text-2xl font-semibold tracking-tight text-foreground">Documents &amp; Notes</h2>
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -242,11 +242,11 @@ export function MaterialContentClient({ content }: MaterialContentClientProps) {
                     placeholder="Search documents..."
                     value={docSearchTerm}
                     onChange={(e) => setDocSearchTerm(e.target.value)}
-                    className="pl-10 w-full sm:w-64"
+                    className="pl-10 w-full rounded-full sm:w-64"
                   />
                 </div>
                 <Select value={docSortOption} onValueChange={(value: SortOption) => setDocSortOption(value)}>
-                  <SelectTrigger className="w-full sm:w-48">
+                  <SelectTrigger className="w-full rounded-full sm:w-48">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>

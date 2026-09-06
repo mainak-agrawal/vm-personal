@@ -1,37 +1,14 @@
 
-import Image from 'next/image';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getTeacherProfile } from '@/lib/data';
-import type { TeacherProfile, AcademicProfile, ProfessionalProfileSection } from '@/types';
-import { ArrowRight, Dot } from 'lucide-react';
+import type { TeacherProfile } from '@/types';
+import { ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   description:
     'Vishva Mohan is a Science educator and mentor coaching high school students for JEE and NEET, especially Physics. Explore free study materials, lecture videos, quizzes, and interactive simulations for JEE, NEET, CBSE, ICSE, and IB-Board.',
 };
-
-const SubBulletPoint = ({ children }: { children: React.ReactNode }) => (
-  <li className="flex items-start text-muted-foreground ml-6">
-    <Dot className="h-5 w-5 text-primary mr-2 mt-1 shrink-0" />
-    <span>{children}</span>
-  </li>
-);
-
-// Helper function to render text with HTML bold tags
-const renderTextWithBold = (text: string) => {
-  const parts = text.split(/(<b>.*?<\/b>)/g);
-  return parts.map((part, index) => {
-    if (part.startsWith('<b>') && part.endsWith('</b>')) {
-      const boldText = part.slice(3, -4); // Remove <b> and </b>
-      return <strong key={index}>{boldText}</strong>;
-    }
-    return part;
-  });
-};
-
 
 export default async function HomePage() {
   const profile: TeacherProfile = await getTeacherProfile();
@@ -76,97 +53,48 @@ export default async function HomePage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 md:py-12">
+    <section className="bg-aurora relative flex min-h-[calc(100dvh-4rem)] flex-col items-center justify-center overflow-hidden px-6 py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
       />
-      <Card className="overflow-hidden shadow-xl">
-        <div className="p-6 md:p-8">
-          <CardHeader className="p-0 mb-6">
-            <h1 className="font-headline text-4xl md:text-5xl font-bold text-primary">{profile.name}</h1>
-            <p className="text-xl text-accent font-semibold mt-1">{profile.title}</p>
-          </CardHeader>
-          <CardContent className="p-0 space-y-6">
-            <div className="relative">
-              <Image
-                src={profile.photoUrl}
-                alt={profile.name}
-                width={300} 
-                height={365} 
-                className="float-left mr-6 mb-4 rounded-lg shadow-md max-w-[250px] md:max-w-[300px] h-auto"
-                data-ai-hint="teacher portrait"
-                priority
-                fetchPriority="high"
-              />
-              <div>
-                <h2 className="font-headline text-2xl font-semibold text-foreground mb-4">About Me</h2>
-                <div className="text-muted-foreground leading-relaxed space-y-4 text-justify">
-                  {profile.bio.split('\n\n').map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                  ))}
-                </div>
-              </div>
-              <div className="clear-left"></div>
-            </div>
 
-              {profile.academicProfiles.map((academic, index) => (
-                <div key={`academic-${index}`}>
-                  <h3 className="font-headline text-lg font-semibold text-foreground mb-1">
-                    {academic.degree}
-                  </h3>
-                  {academic.description && (
-                    <p className="text-muted-foreground ml-6 font-medium mb-2">
-                      {academic.description}
-                    </p>
-                  )}
-                  <ul className="space-y-1">
-                    {academic.points.map((point, pIndex) => (
-                      <SubBulletPoint key={`academic-${index}-point-${pIndex}`}>{point}</SubBulletPoint>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-              
-              {profile.professionalSections.map((section, index) => (
-                <div key={`professional-${index}`}>
-                  {section.heading ? (
-                    <h3 className="font-headline text-lg font-semibold text-foreground mb-3">
-                      {section.heading}
-                    </h3>
-                  ) : (
-                    <div className="h-4"></div>
-                  )}
-                  {section.description && (
-                    <p className="text-muted-foreground ml-6 text-base font-medium mb-4">
-                      {renderTextWithBold(section.description)}
-                    </p>
-                  )}
-                  <ul className="space-y-1">
-                    {section.points.map((point, pIndex) => (
-                      <SubBulletPoint key={`professional-${index}-point-${pIndex}`}>{point}</SubBulletPoint>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-              
-              <div className="pt-4 flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                  <Link href="/resources">
-                    Resources
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                  <Link href="/contact">
-                    Get in Touch
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-              </div>
-            </CardContent>
+      {/* Visually hidden content preserved for SEO / screen readers */}
+      <div className="sr-only">
+        <h2>Science Classes by Vishva Mohan — Physics Coach for JEE &amp; NEET</h2>
+        <p>
+          Vishva Mohan is a Physics and Science educator and mentor coaching high school
+          students for JEE (Advanced &amp; Main) and NEET. Explore free study materials,
+          lecture videos, quizzes, and interactive simulations across Physics, Mathematics,
+          and Biology for Class IX, Class X, Class XI, and Class XII students following CBSE,
+          ICSE, and IB boards.
+        </p>
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-5xl text-center">
+        <p className="mb-6 font-headline text-xs font-medium uppercase tracking-[0.35em] text-muted-foreground">
+          Science Classes by Vishva Mohan
+        </p>
+        <h1 className="text-balance font-headline text-4xl font-semibold leading-[1.05] tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[5.25rem]">
+          For{' '}
+          <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
+            growing minds
+          </span>
+          <span className="mt-3 block text-2xl font-normal leading-tight tracking-tight text-muted-foreground sm:text-3xl md:text-4xl">
+            not just a better report card
+          </span>
+        </h1>
+
+        <div className="mt-24 flex justify-center sm:mt-28 md:mt-32">
+          <Link
+            href="/resources"
+            className="group inline-flex items-center gap-3 rounded-full border border-white/60 bg-white/40 px-12 py-6 font-headline text-2xl font-medium tracking-tight text-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85),0_8px_30px_-6px_rgba(0,0,0,0.15)] backdrop-blur-lg transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:bg-white/55 hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9),0_16px_40px_-8px_rgba(0,0,0,0.22)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0 active:scale-[0.98] dark:border-white/15 dark:bg-white/10 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.18),0_8px_30px_-6px_rgba(0,0,0,0.4)] dark:hover:bg-white/15 sm:text-3xl"
+          >
+            Resources
+            <ArrowRight className="h-6 w-6 transition-transform duration-300 group-hover:translate-x-1 sm:h-7 sm:w-7" />
+          </Link>
         </div>
-      </Card>
-    </div>
+      </div>
+    </section>
   );
 }

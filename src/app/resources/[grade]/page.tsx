@@ -61,30 +61,35 @@ export default async function TopicsPage({ params }: TopicsPageProps) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
-        <ol className="flex flex-wrap items-center gap-2">
-          <li><Link href="/" className="hover:text-primary">Home</Link></li>
-          <li aria-hidden="true">/</li>
-          <li><Link href="/resources" className="hover:text-primary">Resources</Link></li>
-          <li aria-hidden="true">/</li>
-          <li aria-current="page" className="text-foreground">{gradeDisplay}</li>
-        </ol>
-      </nav>
-      <header className="mb-8 text-center">
-        <h1 className="font-headline text-4xl md:text-5xl font-bold text-primary">
-          {gradeDisplay} Topics
-        </h1>
-        <p className="mt-2 text-lg text-muted-foreground">
-          Select a topic to access study materials, videos, and documents.
-        </p>
-      </header>
-      
-      <TopicsListClient topics={topics} grade={grade} />
+    <div className="bg-aurora min-h-[calc(100dvh-4rem)]">
+      <div className="container mx-auto max-w-5xl px-6 py-12 md:py-16">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
+        <nav aria-label="Breadcrumb" className="mb-8 text-sm text-muted-foreground">
+          <ol className="flex flex-wrap items-center gap-2">
+            <li><Link href="/" className="transition-colors hover:text-primary">Home</Link></li>
+            <li aria-hidden="true" className="text-border">/</li>
+            <li><Link href="/resources" className="transition-colors hover:text-primary">Resources</Link></li>
+            <li aria-hidden="true" className="text-border">/</li>
+            <li aria-current="page" className="text-foreground">{gradeDisplay}</li>
+          </ol>
+        </nav>
+        <header className="mb-10">
+          <p className="font-headline text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground">
+            Topics
+          </p>
+          <h1 className="mt-3 font-headline text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
+            {gradeDisplay}
+          </h1>
+          <p className="mt-3 text-lg text-muted-foreground">
+            Select a topic to access study materials, videos, and documents.
+          </p>
+        </header>
+
+        <TopicsListClient topics={topics} grade={grade} />
+      </div>
     </div>
   );
 }
